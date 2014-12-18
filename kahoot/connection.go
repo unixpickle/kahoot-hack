@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync/atomic"
 )
-
-type PacketFilter func(*Packet) bool
 
 type Connection struct {
 	ws       *websocket.Conn
-	id       int
-	gameid   int
+	lastId   int32
+	gameId   int
 	clientId string
+	incoming chan incomingData
 }
 
 type Packet struct {
@@ -24,60 +24,97 @@ type Packet struct {
 	Content map[string]interface{}
 }
 
-func NewConnection(gamePin string) (*Connection, error) {
-	gameid, err := strconv.Atoi(gamePin)
+type PacketFilter func(*Packet) bool
+
+type incomingData struct {
+	packet *Packet
+	err    error
+}
+
+func NewConnection(pin string) (*Connection, error) {
+	gameId, err := strconv.Atoi(pin)
 	if err != nil {
 		return nil, err
 	}
+
 	conn, err := tls.Dial("tcp", "kahoot.it:443", nil)
 	if err != nil {
 		return nil, err
 	}
+
 	url, _ := url.Parse("wss://kahoot.it/cometd")
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
-	reqHeader.Set("Cookie", "no.mobitroll.session=" + gamePin)
+	reqHeader.Set("Cookie", "no.mobitroll.session="+pin)
 	ws, _, err := websocket.NewClient(conn, url, reqHeader, 100, 100)
 	if err != nil {
 		return nil, err
 	}
-	return &Connection{ws, 0, gameid, ""}, nil
+
+	incoming := make(chan incomingData, 100)
+	res := &Connection{ws, 0, gameId, "", incoming}
+	go res.readLoop()
+	return res, nil
 }
 
-func (c *Connection) NewPacket(channel string,
-	content map[string]interface{}) *Packet {
-	c.id++
-	return &Packet{channel, strconv.Itoa(c.id), content}
+func (c *Connection) Packet(channel string, d map[string]interface{}) *Packet {
+	nextId := int(atomic.AddInt32(&c.lastId, 1))
+	return &Packet{channel, strconv.Itoa(nextId), d}
 }
 
-func (c *Connection) Write(p *Packet, ack interface{}) error {
-	obj := map[string]interface{}{"id": p.Id, "channel": p.Channel}
+func (c *Connection) Read() (*Packet, error) {
+	if val, ok := <-c.incoming; !ok {
+		return nil, errors.New("Connection closed.")
+	} else {
+		return val.packet, val.err
+	}
+}
+
+func (c *Connection) Write(p *Packet) error {
+	obj := map[string]interface{}{"id": p.Id, "channel": p.Channel,
+		"ext": map[string]interface{}{}}
 	for key, val := range p.Content {
 		obj[key] = val
 	}
-	ext := map[string]interface{}{}
-	if b, ok := ack.(bool); !ok || b {
-		ext["ack"] = ack
-	}
-	obj["ext"] = ext
-	
+
 	// Send the JSON object
 	sendObj := []map[string]interface{}{obj}
 	return c.ws.WriteJSON(sendObj)
 }
 
-func (c *Connection) Read() (*Packet, error) {
+func (c *Connection) WriteAck(p *Packet, ack interface{}) error {
+	obj := map[string]interface{}{"id": p.Id, "channel": p.Channel,
+		"ext": map[string]interface{}{"ack": ack}}
+	for key, val := range p.Content {
+		obj[key] = val
+	}
+
+	// Send the JSON object
+	sendObj := []map[string]interface{}{obj}
+	return c.ws.WriteJSON(sendObj)
+}
+
+func (c *Connection) readLoop() {
 	for {
-		p, err := c.readRaw()
-		if err != nil {
-			return nil, err
-		}
-		if p.Channel == "/meta/connect" {
-			// Reply to it
+		if p, err := c.readRaw(); err != nil {
+			// We have reached the end of the stream
+			c.incoming <- incomingData{nil, err}
+			close(c.incoming)
+			return
+		} else if p.Channel == "/meta/connect" {
+			// Send a connect packet
 			ext := p.Content["ext"].(map[string]interface{})
-			c.SendConnect(ext["ack"])
+			content := map[string]interface{}{"clientId": c.clientId,
+				"connectionType": "websocket"}
+			p := c.Packet("/meta/connect", content)
+			if err := c.WriteAck(p, ext["ack"]); err != nil {
+				c.incoming <- incomingData{nil, err}
+				close(c.incoming)
+				return
+			}
 		} else {
-			return p, err
+			// Normal packet
+			c.incoming <- incomingData{p, nil}
 		}
 	}
 }
@@ -92,11 +129,11 @@ func (c *Connection) readRaw() (*Packet, error) {
 		return nil, errors.New("Got empty response")
 	}
 	object := container[0]
-	
+
 	// Decode the packet
 	p := new(Packet)
 	p.Content = map[string]interface{}{}
-	
+
 	// Decode channel and id keys
 	if channel, ok := object["channel"]; !ok {
 		return nil, errors.New("No 'channel' key")
@@ -108,7 +145,7 @@ func (c *Connection) readRaw() (*Packet, error) {
 			return nil, errors.New("Invalid type for 'id' key")
 		}
 	}
-	
+
 	for key, val := range object {
 		if key == "id" || key == "channel" {
 			continue
@@ -116,29 +153,4 @@ func (c *Connection) readRaw() (*Packet, error) {
 		p.Content[key] = val
 	}
 	return p, nil
-}
-
-func (c *Connection) ReadId(id string) (*Packet, error) {
-	return c.readFilter(func(p *Packet) bool {
-		return p.Id == id
-	})
-}
-
-func (c *Connection) ReadChannel(channel string) (*Packet, error) {
-	return c.readFilter(func(p *Packet) bool {
-		return p.Channel == channel
-	})
-}
-
-func (c *Connection) readFilter(f PacketFilter) (*Packet, error) {
-	for {
-		p, err := c.Read()
-		if err != nil {
-			return nil, err
-		}
-		if f(p) {
-			return p, nil
-		}
-		// Discarding packet
-	}
 }

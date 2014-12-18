@@ -1,10 +1,9 @@
 package kahoot
 
-func (c *Connection) WriteData(channel string,
-	data interface{}) (string, error) {
+func (c *Connection) WriteData(ch string, data interface{}) (string, error) {
 	content := map[string]interface{}{"data": data, "clientId": c.clientId}
-	pack := c.NewPacket(channel, content)
-	if err := c.Write(pack, false); err != nil {
+	pack := c.Packet(ch, content)
+	if err := c.Write(pack); err != nil {
 		return "", err
 	}
 	return pack.Id, nil

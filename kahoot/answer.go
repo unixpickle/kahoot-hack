@@ -1,8 +1,6 @@
 package kahoot
 
-import (
-	"encoding/json"
-)
+import "encoding/json"
 
 func (c *Connection) WaitQuestion() error {
 	for {
@@ -28,12 +26,12 @@ func (c *Connection) WaitQuestion() error {
 func (c *Connection) SendAnswer(choice int) error {
 	screen := map[string]interface{}{"width": 1920, "height": 1080}
 	device := map[string]interface{}{"userAgent": "hey", "screen": screen}
-	meta := map[string]interface{}{"lag": -10000, "device": device}
+	meta := map[string]interface{}{"lag": 13, "device": device}
 	content := map[string]interface{}{"choice": choice, "meta": meta}
 	if enc, err := json.Marshal(content); err != nil {
 		return err
 	} else {
-		data := map[string]interface{}{"type": "message", "gameid": c.gameid,
+		data := map[string]interface{}{"type": "message", "gameid": c.gameId,
 			"host": "kahoot.it", "content": string(enc), "id": 6}
 		_, err = c.WriteData("/service/controller", data)
 		return err
@@ -47,10 +45,9 @@ func (c *Connection) SendCrashAnswer() error {
 	if enc, err := json.Marshal(content); err != nil {
 		return err
 	} else {
-		data := map[string]interface{}{"type": "message", "gameid": c.gameid,
+		data := map[string]interface{}{"type": "message", "gameid": c.gameId,
 			"host": "kahoot.it", "content": string(enc), "id": 6}
 		_, err = c.WriteData("/service/controller", data)
 		return err
 	}
 }
-

@@ -6,8 +6,8 @@ func (c *Connection) Subscribe(channels ...string) error {
 	for _, ch := range channels {
 		content := map[string]interface{}{"subscription": ch,
 			"clientId": c.clientId}
-		pack := c.NewPacket("/meta/subscribe", content)
-		if err := c.Write(pack, false); err != nil {
+		pack := c.Packet("/meta/subscribe", content)
+		if err := c.Write(pack); err != nil {
 			return err
 		}
 		res, err := c.ReadId(pack.Id)
@@ -27,8 +27,8 @@ func (c *Connection) Unsubscribe(channels ...string) error {
 	for _, ch := range channels {
 		content := map[string]interface{}{"subscription": ch,
 			"clientId": c.clientId}
-		pack := c.NewPacket("/meta/unsubscribe", content)
-		if err := c.Write(pack, false); err != nil {
+		pack := c.Packet("/meta/unsubscribe", content)
+		if err := c.Write(pack); err != nil {
 			return err
 		}
 		res, err := c.ReadId(pack.Id)

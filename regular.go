@@ -34,6 +34,9 @@ func main() {
 		var number string
 		fmt.Scanln(&number)
 		parsed, _ := strconv.Atoi(number)
-		conn.SendAnswer(parsed)
+		if err := conn.SendAnswer(parsed); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 }

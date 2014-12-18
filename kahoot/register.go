@@ -8,7 +8,12 @@ func (c *Connection) Register(nick string) error {
 	if err := c.SubscribeAll(); err != nil {
 		return err
 	}
-	if err := c.SendConnect(-1); err != nil {
+
+	// Initial "connect" message
+	content := map[string]interface{}{"clientId": c.clientId,
+		"connectionType": "websocket"}
+	p := c.Packet("/meta/connect", content)
+	if err := c.WriteAck(p, -1); err != nil {
 		return err
 	}
 
@@ -18,7 +23,8 @@ func (c *Connection) Register(nick string) error {
 	if err := c.SubscribeAll(); err != nil {
 		return err
 	}
-	loginData := map[string]interface{}{"type": "login", "gameid": c.gameid,
+
+	loginData := map[string]interface{}{"type": "login", "gameid": c.gameId,
 		"host": "kahoot.it", "name": nick}
 	lastId, err := c.WriteData("/service/controller", loginData)
 	if err != nil {
@@ -27,6 +33,7 @@ func (c *Connection) Register(nick string) error {
 	if _, err := c.ReadId(lastId); err != nil {
 		return err
 	}
+
 	return nil
 }
 
