@@ -9,10 +9,14 @@ import (
 	"strconv"
 )
 
+type PacketFilter func(*Packet) bool
+
 type Connection struct {
 	ws       *websocket.Conn
 	id       int
+	gameid   int
 	clientId string
+	skipped  []*Packet
 }
 
 type Packet struct {
@@ -22,6 +26,10 @@ type Packet struct {
 }
 
 func NewConnection(gamePin string) (*Connection, error) {
+	gameid, err := strconv.Atoi(gamePin)
+	if err != nil {
+		return nil, err
+	}
 	conn, err := tls.Dial("tcp", "kahoot.it:443", nil)
 	if err != nil {
 		return nil, err
@@ -34,7 +42,7 @@ func NewConnection(gamePin string) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Connection{ws, 0, ""}, nil
+	return &Connection{ws, 0, gameid, "", []*Packet{}}, nil
 }
 
 func (c *Connection) NewPacket(channel string,
@@ -60,6 +68,9 @@ func (c *Connection) Write(p *Packet, ack interface{}) error {
 }
 
 func (c *Connection) Read() (*Packet, error) {
+	if len(c.skipped) > 0 {
+		return c.shiftSkipped(), nil
+	}
 	// Read the object
 	var container []map[string]interface{}
 	if err := c.ws.ReadJSON(&container); err != nil {
@@ -80,10 +91,10 @@ func (c *Connection) Read() (*Packet, error) {
 	} else if p.Channel, ok = channel.(string); !ok {
 		return nil, errors.New("Invalid type for 'channel' key")
 	}
-	if id, ok := object["id"]; !ok {
-		return nil, errors.New("No 'id' key")
-	} else if p.Id, ok = id.(string); !ok {
-		return nil, errors.New("Invalid type for 'id' key")
+	if id, ok := object["id"]; ok {
+		if p.Id, ok = id.(string); !ok {
+			return nil, errors.New("Invalid type for 'id' key")
+		}
 	}
 	
 	for key, val := range object {
@@ -93,4 +104,61 @@ func (c *Connection) Read() (*Packet, error) {
 		p.Content[key] = val
 	}
 	return p, nil
+}
+
+func (c *Connection) ReadId(id string) (*Packet, error) {
+	return c.readFilter(func(p *Packet) bool {
+		return p.Id == id
+	})
+}
+
+func (c *Connection) ReadChannel(channel string) (*Packet, error) {
+	return c.readFilter(func(p *Packet) bool {
+		return p.Channel == channel
+	})
+}
+
+func (c *Connection) ReadBuffer() []*Packet {
+	b := c.skipped
+	c.skipped = []*Packet{}
+	return b
+}
+
+func (c *Connection) readFilter(f PacketFilter) (*Packet, error) {
+	if res := c.findSkipped(f); res != nil {
+		return res, nil
+	}
+	for {
+		p, err := c.Read()
+		if err != nil {
+			return nil, err
+		}
+		if f(p) {
+			return p, nil
+		} else {
+			c.skipped = append(c.skipped, p)
+		}
+	}
+}
+
+func (c *Connection) shiftSkipped() *Packet {
+	return c.findSkipped(func(p *Packet) bool {
+		return true
+	})
+}
+
+func (c *Connection) findSkipped(f PacketFilter) *Packet {
+	var p *Packet = nil
+	for i := 0; i < len(c.skipped); i++ {
+		if p != nil {
+			c.skipped[i - 1] = c.skipped[i]
+		} else if f(c.skipped[i]) {
+			p = c.skipped[i]
+		}
+	}
+	if p == nil {
+		return nil
+	}
+	c.skipped = c.skipped[0:len(c.skipped) - 1]
+	return p
 }

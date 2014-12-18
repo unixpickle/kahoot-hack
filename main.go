@@ -19,15 +19,10 @@ func main() {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	if err := conn.Handshake(); err != nil {
-		fmt.Println("Handshake error:", err)
+	if err := conn.Register(nickname); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
-	services := []string{"/service/player", "/service/controller",
-		"/service/status"}
-	err = conn.Subscribe(services)
-	if err != nil {
-		fmt.Println("Subscribe failed:", err)
-		os.Exit(1)
-	}
+	fmt.Println("Hit enter to disconnect...")
+	fmt.Scanln(&pin)
 }

@@ -10,7 +10,7 @@ func (c *Connection) Handshake() error {
 	if err := c.Write(pack, true); err != nil {
 		return err
 	}
-	res, err := c.Read()
+	res, err := c.ReadId(pack.Id)
 	if err != nil {
 		return err
 	}
