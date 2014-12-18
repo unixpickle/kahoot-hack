@@ -13,9 +13,15 @@ func main() {
 	fmt.Scanln(&pin)
 	fmt.Print("Enter nickname: ")
 	fmt.Scanln(&nickname)
-	_, err := kahoot.NewConnection(pin)
+	fmt.Println("Connecting...")
+	conn, err := kahoot.NewConnection(pin)
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
+	if err := conn.Handshake(); err != nil {
+		fmt.Println("Handshake error:", err)
+		os.Exit(1)
+	}
+	
 }

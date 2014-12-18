@@ -51,5 +51,8 @@ ME:
 SERVER:
 
 [{"id":"1","minimumVersion":"1.0","supportedConnectionTypes":["websocket","callback-polling","long-polling"],"successful":true,"channel":"/meta/handshake","ext":{"timesync":{"ts":1418850483786,"tc":1418850482639,"a":-1147,"p":0},"ack":true},"clientId":"6xphxb8ui08adi861637mi8exihe0","version":"1.0"}]	301	4:08:02 PM	
+
+ME:
+
 [{"version":"1.0","minimumVersion":"1.0","channel":"/meta/handshake","supportedConnectionTypes":["websocket","long-polling"],"advice":{"timeout":60000,"interval":0},"id":"1","ext":{"ack":true,"timesync":{"tc":1418850482639,"l":0,"o":0}}}]	238	4:08:02 PM	
 ConsoleSearchEmulationRendering
