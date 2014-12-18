@@ -23,5 +23,11 @@ func main() {
 		fmt.Println("Handshake error:", err)
 		os.Exit(1)
 	}
-	
+	services := []string{"/service/player", "/service/controller",
+		"/service/status"}
+	err = conn.Subscribe(services)
+	if err != nil {
+		fmt.Println("Subscribe failed:", err)
+		os.Exit(1)
+	}
 }
