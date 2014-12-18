@@ -9,8 +9,6 @@ import (
 	"strconv"
 )
 
-import "fmt"
-
 type PacketFilter func(*Packet) bool
 
 type Connection struct {
@@ -117,7 +115,6 @@ func (c *Connection) readRaw() (*Packet, error) {
 		}
 		p.Content[key] = val
 	}
-	fmt.Println("read packet:", p.Content, "channel:", p.Channel)
 	return p, nil
 }
 
