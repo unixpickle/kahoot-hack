@@ -28,7 +28,7 @@ func (c *Connection) WaitQuestion() error {
 func (c *Connection) SendAnswer(choice int) error {
 	screen := map[string]interface{}{"width": 1920, "height": 1080}
 	device := map[string]interface{}{"userAgent": "hey", "screen": screen}
-	meta := map[string]interface{}{"lag": 100000000, "device": device}
+	meta := map[string]interface{}{"lag": -10000, "device": device}
 	content := map[string]interface{}{"choice": choice, "meta": meta}
 	if enc, err := json.Marshal(content); err != nil {
 		return err
