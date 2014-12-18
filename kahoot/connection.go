@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+import "fmt"
+
 type PacketFilter func(*Packet) bool
 
 type Connection struct {
@@ -67,6 +69,22 @@ func (c *Connection) Write(p *Packet, ack interface{}) error {
 }
 
 func (c *Connection) Read() (*Packet, error) {
+	for {
+		p, err := c.readRaw()
+		if err != nil {
+			return nil, err
+		}
+		if p.Channel == "/meta/connect" {
+			// Reply to it
+			ext := p.Content["ext"].(map[string]interface{})
+			c.SendConnect(ext["ack"])
+		} else {
+			return p, err
+		}
+	}
+}
+
+func (c *Connection) readRaw() (*Packet, error) {
 	// Read the object
 	var container []map[string]interface{}
 	if err := c.ws.ReadJSON(&container); err != nil {
@@ -99,6 +117,7 @@ func (c *Connection) Read() (*Packet, error) {
 		}
 		p.Content[key] = val
 	}
+	fmt.Println("read packet:", p.Content, "channel:", p.Channel)
 	return p, nil
 }
 
