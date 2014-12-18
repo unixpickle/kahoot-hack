@@ -1,0 +1,32 @@
+Flow for answering questions
+
+When server sends question:
+
+[{"data":{"content":"{\"questionIndex\":1,\"answerMap\":{\"0\":0,\"1\":1,\"2\":2,\"3\":3},\"quizType\":\"quiz\",\"quizQuestionAnswers\":[4,4,4]}","id":1,"type":"message"},"channel":"/service/player"}]
+
+When I send answer:
+
+[{"channel":"/service/controller","data":{"id":6,"type":"message","gameid":71856,"host":"kahoot.it","content":"{\"choice\":0,\"meta\":{\"lag\":13,\"device\":{\"userAgent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36\",\"screen\":{\"width\":1920,\"height\":1053}}}}"},"id":"25","clientId":"6oyq212lccz8x9lv23emden1d17p2f"}]	
+
+Dump of traffic:
+
+[{"channel":"/meta/connect","connectionType":"websocket","id":"18","clientId":"6oyq212lccz8x9lv23emden1d17p2f","ext":{"ack":6,"timesync":{"tc":1418902961263,"l":15,"o":138923}}}]	178	6:42:41 AM	
+[{"id":"17","successful":true,"channel":"/meta/connect","ext":{"timesync":{"ts":1418903100144,"tc":1418902961205,"a":-1,"p":28},"ack":6}}]	138	6:42:41 AM	
+[{"data":{"content":"{\"quizType\":\"quiz\",\"quizQuestionAnswers\":[4,4,4]}","id":4,"type":"message"},"channel":"/service/player"}]	132	6:42:41 AM	
+[{"channel":"/meta/connect","connectionType":"websocket","id":"17","clientId":"6oyq212lccz8x9lv23emden1d17p2f","ext":{"ack":5,"timesync":{"tc":1418902961205,"l":15,"o":138923}}}]	178	6:42:41 AM	
+[{"id":"16","successful":true,"channel":"/meta/connect","ext":{"timesync":{"ts":1418903070117,"tc":1418902931179,"a":0,"p":30000},"ack":5}}]	140	6:42:41 AM	
+[{"channel":"/meta/connect","connectionType":"websocket","id":"16","clientId":"6oyq212lccz8x9lv23emden1d17p2f","ext":{"ack":4,"timesync":{"tc":1418902931179,"l":15,"o":138923}}}]	178	6:42:11 AM	
+
+SERVER:
+
+[{"id":"15","successful":true,"channel":"/meta/connect","ext":{"timesync":{"ts":1418903065092,"tc":1418902926155,"a":1,"p":4976},"ack":4}}]	139	6:42:11 AM	
+[{"data":{"content":"{\"questionNumber\":1,\"answerMap\":{\"0\":0,\"1\":1,\"2\":2,\"3\":3},\"quizType\":\"quiz\",\"quizQuestionAnswers\":[4,4,4]}","id":2,"type":"message"},"channel":"/service/player"}]	201	6:42:11 AM	
+
+ME: 
+
+[{"channel":"/meta/connect","connectionType":"websocket","id":"15","clientId":"6oyq212lccz8x9lv23emden1d17p2f","ext":{"ack":3,"timesync":{"tc":1418902926155,"l":15,"o":138923}}}]	178	6:42:06 AM	
+
+Server:
+
+[{"id":"14","successful":true,"channel":"/meta/connect","ext":{"timesync":{"ts":1418903057584,"tc":1418902918647,"a":0,"p":7468},"ack":3}}]	139	6:42:06 AM	
+[{"data":{"content":"{\"questionIndex\":1,\"answerMap\":{\"0\":0,\"1\":1,\"2\":2,\"3\":3},\"quizType\":\"quiz\",\"quizQuestionAnswers\":[4,4,4]}","id":1,"type":"message"},"channel":"/service/player"}]	200	
