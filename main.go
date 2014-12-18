@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/unixpickle/kahoot-hack/kahoot"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -23,6 +24,16 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Println("Hit enter to disconnect...")
-	fmt.Scanln(&pin)
+	for {
+		p, err := conn.WaitQuestion()
+		if err != nil {
+			fmt.Println("Done question loop:", err)
+			os.Exit(1)
+		}
+		fmt.Print("Got question. Answer: ")
+		var number string
+		fmt.Scanln(&number)
+		parsed, _ := strconv.Atoi(number)
+		conn.SendAnswer(p, parsed)
+	}
 }
