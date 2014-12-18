@@ -15,6 +15,5 @@ func (c *Connection) Register(nick string) error {
 	if _, err := c.ReadId(lastId); err != nil {
 		return err
 	}
-	c.ReadBuffer()
 	return nil
 }

@@ -16,7 +16,6 @@ type Connection struct {
 	id       int
 	gameid   int
 	clientId string
-	skipped  []*Packet
 }
 
 type Packet struct {
@@ -42,7 +41,7 @@ func NewConnection(gamePin string) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Connection{ws, 0, gameid, "", []*Packet{}}, nil
+	return &Connection{ws, 0, gameid, ""}, nil
 }
 
 func (c *Connection) NewPacket(channel string,
@@ -68,9 +67,6 @@ func (c *Connection) Write(p *Packet, ack interface{}) error {
 }
 
 func (c *Connection) Read() (*Packet, error) {
-	if len(c.skipped) > 0 {
-		return c.shiftSkipped(), nil
-	}
 	// Read the object
 	var container []map[string]interface{}
 	if err := c.ws.ReadJSON(&container); err != nil {
@@ -118,16 +114,7 @@ func (c *Connection) ReadChannel(channel string) (*Packet, error) {
 	})
 }
 
-func (c *Connection) ReadBuffer() []*Packet {
-	b := c.skipped
-	c.skipped = []*Packet{}
-	return b
-}
-
 func (c *Connection) readFilter(f PacketFilter) (*Packet, error) {
-	if res := c.findSkipped(f); res != nil {
-		return res, nil
-	}
 	for {
 		p, err := c.Read()
 		if err != nil {
@@ -135,30 +122,7 @@ func (c *Connection) readFilter(f PacketFilter) (*Packet, error) {
 		}
 		if f(p) {
 			return p, nil
-		} else {
-			c.skipped = append(c.skipped, p)
 		}
+		// Discarding packet
 	}
-}
-
-func (c *Connection) shiftSkipped() *Packet {
-	return c.findSkipped(func(p *Packet) bool {
-		return true
-	})
-}
-
-func (c *Connection) findSkipped(f PacketFilter) *Packet {
-	var p *Packet = nil
-	for i := 0; i < len(c.skipped); i++ {
-		if p != nil {
-			c.skipped[i - 1] = c.skipped[i]
-		} else if f(c.skipped[i]) {
-			p = c.skipped[i]
-		}
-	}
-	if p == nil {
-		return nil
-	}
-	c.skipped = c.skipped[0:len(c.skipped) - 1]
-	return p
 }
