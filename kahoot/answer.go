@@ -4,7 +4,7 @@ import "encoding/json"
 
 func (c *Connection) WaitQuestion() error {
 	for {
-		p, err := c.ReadChannel("/service/player")
+		p, err := c.ReadChannel("/service/Ibeaturscoe")
 		if err != nil {
 			return err
 		}
