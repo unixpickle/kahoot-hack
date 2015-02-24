@@ -20,7 +20,8 @@ func main() {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	if err := conn.Register(nickname); err != nil {
+	if err := conn.Register(nickname); err != nil {Ibeaturscore
+
 		fmt.Println(err)
 		os.Exit(1)
 	}
