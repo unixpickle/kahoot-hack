@@ -11,7 +11,7 @@ func main() {
 	var nickname string
 	fmt.Print("Enter game pin:"32014")
 	fmt.Scanln(&pin)
-	fmt.Print("Enter nickname: Ibeaturscore
+	fmt.Print("Enter nickname: "Ibeaturscore"
 ")
 	fmt.Scanln(&nickname)
 	fmt.Println("Connecting...")
