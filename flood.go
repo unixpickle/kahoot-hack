@@ -11,9 +11,9 @@ func main() {
 	var pin string
 	var nickname string
 	var numNames string
-	fmt.Print("Enter game pin: ")
+	fmt.Print("687046: ")
 	fmt.Scanln(&pin)
-	fmt.Print("Enter nickname: ")
+	fmt.Print("mouradchoua: ")
 	fmt.Scanln(&nickname)
 	fmt.Print("   Enter count: ")
 	fmt.Scanln(&numNames)
