@@ -132,20 +132,18 @@ func (c *Conn) Login(nickname string) error {
 		return err
 	}
 
-	resp, err := c.Receive("/service/controller")
-	if err != nil {
-		return err
-	}
-
-	if data, ok := resp["data"].(map[string]interface{}); !ok {
-		return errors.New("invalid controller response")
-	} else {
-		if typeStr, ok := data["type"].(string); !ok || typeStr != "loginResponse" {
-			return errors.New("did not receive loginResponse")
+	for {
+		resp, err := c.Receive("/service/controller")
+		if err != nil {
+			return err
+		} else if data, ok := resp["data"].(map[string]interface{}); !ok {
+			continue
+		} else if typeStr, ok := data["type"].(string); !ok || typeStr != "loginResponse" {
+			continue
+		} else {
+			return nil
 		}
 	}
-
-	return nil
 }
 
 // Close terminates the connection, waiting synchronously for the

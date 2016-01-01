@@ -6,8 +6,9 @@ I have reverse engineered parts of the protocol used by [kahoot.it](http://kahoo
 
 Currently, I have implemented the following tools:
 
- * [kahoot-crash](kahoot-crash/) - trigger an exception on the host's computer. This no longer prevents the game from functioning, so it is a rather pointless "hack"
  * [kahoot-flood](kahoot-flood/) - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames "alex1", "alex2", ..., "alex100".
+ * [kahoot-crash](kahoot-crash/) - trigger an exception on the host's computer. This no longer prevents the game from functioning, so it is a rather pointless "hack"
+ * [kahoot-play](kahoot-play/) - play kahoot regularly&mdash;as if you were using the online client.
 
 # Dependencies
 
