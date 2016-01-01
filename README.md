@@ -2,7 +2,7 @@
 
 I have reverse engineered parts of the protocol used by [kahoot.it](http://kahoot.it). This repository contains the results of my labor.
 
-## Current tools
+## Included tools
 
 Currently, I have implemented the following tools:
 
