@@ -6,6 +6,7 @@ html, body {
 }
 
 h1 {
+  position: relative;
   text-align: center;
   margin: 10px 0;
   padding: 0;
@@ -13,6 +14,7 @@ h1 {
 }
 
 form {
+  position: relative;
   max-width: 400px;
   width: calc(100% - 20px);
   margin: auto auto;
@@ -56,6 +58,7 @@ input {
 }
 
 a {
+  position: relative;
   color: white;
   display: block;
   text-align: center;
