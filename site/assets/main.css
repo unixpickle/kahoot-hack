@@ -54,3 +54,14 @@ input {
 .submit-input:active {
   background-color: #d5d5d5;
 }
+
+a {
+  color: white;
+  display: block;
+  text-align: center;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #d5d5d5;
+}

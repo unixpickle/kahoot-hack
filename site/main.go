@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -49,12 +50,13 @@ func handleFlood(w http.ResponseWriter, r *http.Request) {
 	}
 	pin := strings.TrimSpace(r.PostFormValue("pin"))
 	nickname := r.PostFormValue("nickname")
+	log.Println("Flooding game", pin, "with nickname", nickname)
 	gamePin, _ := strconv.Atoi(pin)
 	for i := 0; i < 20; i++ {
 		conn, err := kahoot.NewConn(gamePin)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "failed to connect:", err)
-			os.Exit(1)
+			http.ServeFile(w, r, "assets/unknown_game.html")
+			return
 		}
 		conn.Login(nickname + strconv.Itoa(i+1))
 		defer conn.Close()
