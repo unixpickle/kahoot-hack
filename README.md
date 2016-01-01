@@ -9,6 +9,7 @@ For those of you who are not technically inclined, you can access a working vers
 Currently, I have implemented the following tools:
 
  * [kahoot-flood](kahoot-flood/) - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames "alex1", "alex2", ..., "alex100".
+ * [kahoot-rand](kahoot-rand/) - connect to a game an arbitrary number of times (e.g. 1000) and answer each question randomly. If you connect with enough names, one of them is bound to win.
  * [kahoot-crash](kahoot-crash/) - trigger an exception on the host's computer. This no longer prevents the game from functioning, so it is a rather pointless "hack"
  * [kahoot-play](kahoot-play/) - play kahoot regularly&mdash;as if you were using the online client.
 
