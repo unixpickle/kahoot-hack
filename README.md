@@ -1,17 +1,22 @@
-# Kahoot Hack
+# Abstract
 
-I hope to use this tool to "hack" [kahoot.it](http://kahoot.it) in order to win at every game I play.
+I have reverse engineered parts of the protocol used by [kahoot.it](http://kahoot.it). This repository contains the results of my labor.
 
-**UPDATE**: while the tools provided cannot make you win every time, you can still mess with someone's game of Kahoot.
-
-## Tools included
+## Current tools
 
 Currently, I have implemented the following tools:
 
- * crasher.go - freeze the game of kahoot irreversibly
- * flood.go - flood a lobby with a ton of bogus nicknames
- * regular.go - play the game regularly, answering questions as you progress
+ * [kahoot-crash](kahoot-crash/) - trigger an exception on the host's computer. This no longer prevents the game from functioning, so it is a rather pointless "hack"
+ * [kahoot-flood](kahoot-flood/) - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames "alex1", "alex2", ..., "alex100".
 
 # Dependencies
 
+First, you must have [the Go programming language](https://golang.org/doc/install) installed on your machine.
+
+Once you have Go installed and a `GOPATH` configured, you can use the following command to install the dependencies:
+
     go get github.com/gorilla/websocket
+
+# Usage
+
+Once you have all the needed dependencies, you can run [kahoot-flood/main.go](kahoot-flood/main.go) program to execute the kahoot-flood tool. You can run the other tools in a similar fashion.
