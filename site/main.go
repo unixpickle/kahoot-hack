@@ -10,6 +10,8 @@ import (
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
+var floodSemaphore = make(chan struct{}, 10)
+
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Fprintln(os.Stderr, "Usage: site <port>")
@@ -36,6 +38,11 @@ func main() {
 }
 
 func handleFlood(w http.ResponseWriter, r *http.Request) {
+	floodSemaphore <- struct{}{}
+	defer func() {
+		<-floodSemaphore
+	}()
+
 	if r.ParseForm() != nil {
 		w.Write([]byte("<!doctype html><head></head><body>Invalid form</body><html>"))
 		return
