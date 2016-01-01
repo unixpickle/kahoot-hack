@@ -179,6 +179,7 @@ func (c *Conn) Subscribe(name string) error {
 		c.channelsLock.Unlock()
 		return ErrConnClosed
 	} else if _, ok := c.incoming[name]; ok {
+		c.channelsLock.Unlock()
 		return nil
 	}
 	c.incoming[name] = make(chan Message, incomingBufferSize)
@@ -224,21 +225,25 @@ func (c *Conn) readLoop() {
 		close(c.closed)
 	}()
 	for {
-		var msg Message
-		err := c.ws.ReadJSON(&msg)
+		var msgs []Message
+		err := c.ws.ReadJSON(&msgs)
 		if err != nil {
 			return
 		}
-		if chName, ok := msg["channel"].(string); !ok {
-			return
-		} else {
-			c.channelsLock.RLock()
-			if ch, ok := c.incoming[chName]; ok {
-				// NOTE: the select allows us to drop packets from channels
-				// that nobody cares about (e.g. /meta/connect).
-				select {
-				case ch <- msg:
-				default:
+		for _, msg := range msgs {
+			if chName, ok := msg["channel"].(string); !ok {
+				return
+			} else {
+				c.channelsLock.RLock()
+				ch, ok := c.incoming[chName]
+				c.channelsLock.RUnlock()
+				if ok {
+					// NOTE: the select allows us to drop packets from channels
+					// that nobody cares about (e.g. /meta/connect).
+					select {
+					case ch <- msg:
+					default:
+					}
 				}
 			}
 		}
@@ -253,7 +258,7 @@ func (c *Conn) writeLoop() {
 		if msg["channel"] != "/meta/handshake" {
 			msg["clientId"] = c.clientId
 		}
-		if c.ws.WriteJSON(msg) != nil {
+		if c.ws.WriteJSON([]Message{msg}) != nil {
 			c.ws.Close()
 			return
 		}
