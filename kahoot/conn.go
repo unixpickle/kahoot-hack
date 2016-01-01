@@ -137,7 +137,7 @@ func (c *Conn) Login(nickname string) error {
 		return err
 	}
 
-	if data, ok := resp["data"].(Message); !ok {
+	if data, ok := resp["data"].(map[string]interface{}); !ok {
 		return errors.New("invalid controller response")
 	} else {
 		if typeStr, ok := data["type"].(string); !ok || typeStr != "loginResponse" {
