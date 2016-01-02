@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if len(os.Args) != 4 {
-		fmt.Fprintln(os.Stderr, "Usage: flood <game pin> <nickname prefix> <count>")
+		fmt.Fprintln(os.Stderr, "Usage: rand <game pin> <nickname prefix> <count>")
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
