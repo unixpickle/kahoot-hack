@@ -1,8 +1,8 @@
 package kahoot
 
 import (
-	"crypto/tls"
 	"errors"
+	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -35,7 +35,7 @@ type Conn struct {
 // NewConn connects to the kahoot server and performs a handshake
 // using a given game pin.
 func NewConn(gameId int) (*Conn, error) {
-	conn, err := tls.Dial("tcp", "kahoot.it:443", nil)
+	conn, err := net.Dial("tcp", "kahoot.it:443")
 	if err != nil {
 		return nil, err
 	}
