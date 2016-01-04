@@ -8,6 +8,7 @@ For those of you who are not technically inclined, you can access a working vers
 
 Currently, I have implemented the following tools:
 
+ * [kahoot-xss](kahoot-xss/) - run arbitrary JavaScript code on the host's computer. This exploits a bug with the pre-game player list, which does not sanitize HTML tags. The exploit itself [is rather complicated](#the-xss-hack) due to the fact that nicknames are limited to 15 characters.
  * [kahoot-flood](kahoot-flood/) - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames "alex1", "alex2", ..., "alex100".
  * [kahoot-rand](kahoot-rand/) - connect to a game an arbitrary number of times (e.g. 1000) and answer each question randomly. If you connect with enough names, one of them is bound to win.
  * [kahoot-play](kahoot-play/) - play kahoot regularly&mdash;as if you were using the online client.
@@ -25,6 +26,18 @@ Once you have Go installed and a `GOPATH` configured, you can use the following 
 # Usage
 
 Once you have all the needed dependencies, you can run [kahoot-flood/main.go](kahoot-flood/main.go) program to execute the kahoot-flood tool. You can run the other tools in a similar fashion.
+
+# The XSS hack
+
+The XSS hack allows you to run arbitrary JavaScript code on the coordinator's computer. This could be something like `alert('hey')`, or it could be something much more devious. The command is dead-simple to use as well; you can do something like `go run kahoot-xss/main.go game-pin alert\(\)`. While this seems simple enough, I had to work around some very tough restrictions to get this to work.
+
+The exploit I use only allowed me to execute five-character snippets of JavaScript at a time. Kahoot lets users inject 15 characters of HTML, so we can do something like `<script>code`. The problem is that the client code dumps some HTML tags after our script, so if we did `<script>XXX`, it would result in an eval like `eval("XXX</span></li>")`. To deal with this, the last two characters of our script need to be `//` to introduce a comment. This leaves us with five characters of JavaScript per nickname.
+
+The obvious approach is to build a script string using string concatenations and then evaluate it. The problem is that `eval(e)` is 7 characters, and even something like `e=eval` is 6 characters, one over our limit. In the end, I exploited the fact that Kahoot uses jQuery. Using HTML element construction, I can create a bogus `<img>` that executes code (e.g. `<img src="" onerror="MY_CODE">`). Once I get this into a variable `Z`, I can do `$(Z)`.
+
+I initially tried building strings using a linear approach: `a=''`, `b='X'`, `a+=b`, etc. In theory, this works, but in practice it took way to long to be useful. Now, I use a highly-parallel logarithmic approach. First, I set 32 variables in parallel. Then I join these variables into 16 new variables in parallel (e.g. `a=b+c`). I repeat this until all 32 characters are concatenated into one variable. I then repeat the process for the next 32 characters of the string, until I have built the whole thing.
+
+In sum, my program takes your script and puts it in a malicious `<img>` tag. It then builds a variable on the coordinator's browser with the contents of that tag. Finally, it puts the plan into action by invoking jQuery's conveniently short function name.
 
 # Example
 
