@@ -261,14 +261,19 @@ func (c *Conn) readLoop() {
 
 func (c *Conn) writeLoop() {
 	id := 0
-	for msg := range c.outgoing {
-		id++
-		msg["id"] = strconv.Itoa(id)
-		if msg["channel"] != "/meta/handshake" {
-			msg["clientId"] = c.clientId
-		}
-		if c.ws.WriteJSON([]Message{msg}) != nil {
-			c.ws.Close()
+	for {
+		select {
+		case msg := <-c.outgoing:
+			id++
+			msg["id"] = strconv.Itoa(id)
+			if msg["channel"] != "/meta/handshake" {
+				msg["clientId"] = c.clientId
+			}
+			if c.ws.WriteJSON([]Message{msg}) != nil {
+				c.ws.Close()
+				return
+			}
+		case <-c.closed:
 			return
 		}
 	}
