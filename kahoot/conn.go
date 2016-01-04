@@ -53,9 +53,10 @@ func NewConn(gameId int) (*Conn, error) {
 		ws:     ws,
 		gameId: gameId,
 		incoming: map[string]chan Message{
-			"/meta/connect":   make(chan Message, incomingBufferSize),
-			"/meta/handshake": make(chan Message, incomingBufferSize),
-			"/meta/subscribe": make(chan Message, incomingBufferSize),
+			"/meta/connect":    make(chan Message, incomingBufferSize),
+			"/meta/disconnect": make(chan Message, incomingBufferSize),
+			"/meta/handshake":  make(chan Message, incomingBufferSize),
+			"/meta/subscribe":  make(chan Message, incomingBufferSize),
 		},
 		outgoing: make(chan Message),
 		closed:   make(chan struct{}),
@@ -151,6 +152,16 @@ func (c *Conn) Login(nickname string) error {
 func (c *Conn) Close() {
 	c.ws.Close()
 	<-c.closed
+}
+
+// GracefulClose closes the connection gracefully, telling the other end that
+// we are disconnecting.
+func (c *Conn) GracefulClose() {
+	defer c.Close()
+	if c.Send("/meta/disconnect", Message{}) != nil {
+		return
+	}
+	c.Receive("/meta/disconnect")
 }
 
 // Send transmits a message to the server over a channel.

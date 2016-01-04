@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
@@ -21,7 +23,6 @@ func main() {
 	nickname := os.Args[2]
 
 	conn, err := kahoot.NewConn(gamePin)
-	defer conn.Close()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)
@@ -31,11 +32,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	closed := make(chan bool, 1)
+	closed <- false
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+		<-sigChan
+		<-closed
+		closed <- true
+		conn.GracefulClose()
+	}()
+
 	quiz := kahoot.NewQuiz(conn)
 	for {
 		action, err := quiz.Receive()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Could not receive question:", err)
+			if !<-closed {
+				fmt.Fprintln(os.Stderr, "Could not receive question:", err)
+			}
 			os.Exit(1)
 		}
 		if action.Type == kahoot.QuestionIntro {

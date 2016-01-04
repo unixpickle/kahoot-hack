@@ -4,10 +4,15 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"os/signal"
 	"strconv"
+	"sync"
+	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
+
+var wg sync.WaitGroup
 
 func main() {
 	if len(os.Args) != 4 {
@@ -29,20 +34,34 @@ func main() {
 	nickname := os.Args[2]
 
 	for i := 0; i < count; i++ {
+		wg.Add(1)
 		go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
 	}
 
 	fmt.Println("Terminate this program to stop the automatons...")
-	select {}
+	wg.Wait()
 }
 
 func launchConnection(gamePin int, nickname string) {
+	defer wg.Done()
+
 	conn, err := kahoot.NewConn(gamePin)
-	defer conn.Close()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)
 	}
+
+	closed := make(chan bool, 1)
+	closed <- false
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+		<-sigChan
+		<-closed
+		closed <- true
+		conn.GracefulClose()
+	}()
+
 	if err := conn.Login(nickname); err != nil {
 		fmt.Fprintln(os.Stderr, "failed to login:", err)
 		os.Exit(1)
@@ -51,8 +70,12 @@ func launchConnection(gamePin int, nickname string) {
 	for {
 		action, err := quiz.Receive()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Could not receive question:", err)
-			os.Exit(1)
+			if <-closed {
+				return
+			} else {
+				fmt.Fprintln(os.Stderr, "Could not receive question:", err)
+				os.Exit(1)
+			}
 		}
 		if action.Type == kahoot.QuestionAnswers {
 			quiz.Send(rand.Intn(action.NumAnswers))

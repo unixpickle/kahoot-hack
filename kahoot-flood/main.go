@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
@@ -28,15 +30,17 @@ func main() {
 	nickname := os.Args[2]
 
 	for i := 0; i < count; i++ {
-		conn, err := kahoot.NewConn(gamePin)
-		if err != nil {
+		if conn, err := kahoot.NewConn(gamePin); err != nil {
 			fmt.Fprintln(os.Stderr, "failed to connect:", err)
 			os.Exit(1)
+		} else {
+			defer conn.GracefulClose()
+			conn.Login(nickname + strconv.Itoa(i+1))
 		}
-		conn.Login(nickname + strconv.Itoa(i+1))
-		defer conn.Close()
 	}
 
 	fmt.Println("Kill this process to deauthenticate.")
-	select {}
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	<-sigChan
 }

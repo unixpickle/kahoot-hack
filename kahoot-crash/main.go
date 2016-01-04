@@ -23,7 +23,7 @@ func main() {
 	nickname := os.Args[2]
 
 	conn, err := kahoot.NewConn(gamePin)
-	defer conn.Close()
+	defer conn.GracefulClose()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)
