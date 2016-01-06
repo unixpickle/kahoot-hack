@@ -8,12 +8,12 @@ For those of you who are not technically inclined, you can access a working vers
 
 Currently, I have implemented the following tools:
 
- * [kahoot-xss](kahoot-xss/) - run arbitrary JavaScript code on the host's computer. This exploits a bug with the pre-game player list, which does not sanitize HTML tags. The exploit itself [is rather complicated](#the-xss-hack) due to the fact that nicknames are limited to 15 characters.
  * [kahoot-flood](kahoot-flood/) - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames "alex1", "alex2", ..., "alex100".
  * [kahoot-rand](kahoot-rand/) - connect to a game an arbitrary number of times (e.g. 1000) and answer each question randomly. If you connect with enough names, one of them is bound to win.
  * [kahoot-play](kahoot-play/) - play kahoot regularly&mdash;as if you were using the online client.
  * [kahoot-html](kahoot-html/) - I have notified Kahoot and they have fixed this issue. It used to allow you to join a game of kahoot a bunch of times with HTML-rich nicknames. This messes with the lobby of a kahoot game. See the screenshot in the [example](#example) section.
  * [kahoot-crash](kahoot-crash/) - trigger an exception on the host's computer. This no longer prevents the game from functioning, so it is a rather pointless "hack"
+ * [kahoot-xss](kahoot-xss/) - since I discovered this security hole, I contacted Kahoot and they fixed it. This used to run arbitrary JavaScript code on the host's computer. This exploited a bug with the pre-game player list, which did not sanitize HTML tags. The exploit itself [was rather complicated](#the-xss-hack) due to the fact that nicknames are limited to 15 characters.
 
 # Dependencies
 
@@ -28,6 +28,8 @@ Once you have Go installed and a `GOPATH` configured, you can use the following 
 Once you have all the needed dependencies, you can run [kahoot-flood/main.go](kahoot-flood/main.go) program to execute the kahoot-flood tool. You can run the other tools in a similar fashion.
 
 # The XSS hack
+
+**NOTE:** I have contacted Kahoot and they have fixed this bug. It would have posed an actual security threat to teachers using Kahoot.
 
 The XSS hack allows you to run arbitrary JavaScript code on the coordinator's computer. This could be something like `alert('hey')`, or it could be something much more devious. The command is dead-simple to use as well; you can do something like `go run kahoot-xss/main.go game-pin alert\(\)`. While this seems simple enough, I had to work around some very tough restrictions to get this to work.
 
