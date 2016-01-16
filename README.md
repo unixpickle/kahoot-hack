@@ -2,8 +2,6 @@
 
 I have reverse engineered parts of the protocol used by [kahoot.it](http://kahoot.it). This repository contains the results of my labor.
 
-For those of you who are not technically inclined, you can access a working version of these tools on the web at [hackkahoot.xyz](http://hackkahoot.xyz).
-
 # Included tools
 
 Currently, I have implemented the following tools:
