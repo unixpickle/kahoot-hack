@@ -17,7 +17,7 @@ func main() {
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
+		fmt.Fprintln(os.Stderr, "invalid game pin:", 259035 os.Args[1])
 		os.Exit(1)
 	}
 	nickname := os.Args[2]
