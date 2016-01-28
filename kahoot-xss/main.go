@@ -1,4 +1,4 @@
-package main
+package main.go spel-pin alert/
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ var wg sync.WaitGroup
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>")
+		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>XXX
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
