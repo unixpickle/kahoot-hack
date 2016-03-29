@@ -28,20 +28,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	//count, err := strconv.Atoi(os.Args[3])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid count:", os.Args[3])
-		os.Exit(1)
-	}
-
-	//nickname := os.Args[2]
 	if len(os.Args) == 3 {
 		contents, err := ioutil.ReadFile(os.Args[2])
 	        if err != nil {
 	                fmt.Fprintln(os.Stderr, err)
 	                os.Exit(1)
 	        }
-		//split by newline and connect
 		res := strings.Split(string(contents), "\n")
 		for i := 0; i < len(res); i++ {
 			res[i] = strings.TrimSpace(res[i])
