@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/signal"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 
@@ -15,8 +17,9 @@ import (
 var wg sync.WaitGroup
 
 func main() {
-	if len(os.Args) != 4 {
+	if len(os.Args) != 3 && len(os.Args) != 4 {
 		fmt.Fprintln(os.Stderr, "Usage: rand <game pin> <nickname prefix> <count>")
+		fmt.Fprintln(os.Stderr, "       rand <game pin> <name_list.txt>")
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
@@ -25,17 +28,42 @@ func main() {
 		os.Exit(1)
 	}
 
-	count, err := strconv.Atoi(os.Args[3])
+	//count, err := strconv.Atoi(os.Args[3])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "invalid count:", os.Args[3])
 		os.Exit(1)
 	}
 
-	nickname := os.Args[2]
-
-	for i := 0; i < count; i++ {
-		wg.Add(1)
-		go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
+	//nickname := os.Args[2]
+	if len(os.Args) == 3 {
+		contents, err := ioutil.ReadFile(os.Args[2])
+	        if err != nil {
+	                fmt.Fprintln(os.Stderr, err)
+	                os.Exit(1)
+	        }
+		//split by newline and connect
+		res := strings.Split(string(contents), "\n")
+		for i := 0; i < len(res); i++ {
+			res[i] = strings.TrimSpace(res[i])
+			if len(res[i]) == 0 {
+				res[i] = res[len(res)-1]
+				res = res[:len(res)-1]
+				i--
+			}
+			wg.Add(1)
+			go launchConnection(gamePin, res[i])
+		}
+	} else {
+		count, err := strconv.Atoi(os.Args[3])
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "invalid count:", os.Args[3])
+			os.Exit(1)
+		}
+		nickname := os.Args[2]
+		for i := 0; i < count; i++ {
+			wg.Add(1)
+			go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
+		}
 	}
 
 	fmt.Println("Terminate this program to stop the automatons...")
