@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
@@ -27,6 +28,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
 		os.Exit(1)
 	}
+	delaystr := "100ms"
 
 	if len(os.Args) == 3 {
 		contents, err := ioutil.ReadFile(os.Args[2])
@@ -42,6 +44,13 @@ func main() {
 				res = res[:len(res)-1]
 				i--
 			}
+			d, err := time.ParseDuration(delaystr)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
+				fmt.Fprintln(os.Stderr, "valid delay strings include: 250ms, 1s")
+				os.Exit(1)
+			}
+			time.Sleep(d)
 			wg.Add(1)
 			go launchConnection(gamePin, res[i])
 		}
@@ -54,6 +63,13 @@ func main() {
 		nickname := os.Args[2]
 		for i := 0; i < count; i++ {
 			wg.Add(1)
+			d, err := time.ParseDuration(delaystr)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
+				fmt.Fprintln(os.Stderr, "valid delay strings include: 100ms, 0.1s")
+			os.Exit(1)
+	                }
+	                time.Sleep(d)
 			go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
 		}
 	}

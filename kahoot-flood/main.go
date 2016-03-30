@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
@@ -25,7 +26,8 @@ func main() {
 	}
 
 	for _, nickname := range nicknames() {
-		if conn, err := kahoot.NewConn(gamePin); err != nil {
+		conn, err := kahoot.NewConn(gamePin)
+		if err != nil {
 			fmt.Fprintln(os.Stderr, "failed to connect:", err)
 			os.Exit(1)
 		} else {
