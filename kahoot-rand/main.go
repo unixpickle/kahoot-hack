@@ -16,6 +16,14 @@ import (
 )
 
 var wg sync.WaitGroup
+var zero int
+var one int
+var two int
+var three int
+var qid int
+var answercount int
+
+var count int
 
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
@@ -23,6 +31,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "       rand <game pin> <name_list.txt>")
 		os.Exit(1)
 	}
+	qid = 1
 	gamePin, err := strconv.Atoi(os.Args[1])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
@@ -37,6 +46,7 @@ func main() {
 	                os.Exit(1)
 	        }
 		res := strings.Split(string(contents), "\n")
+		count = len(res) - 1
 		for i := 0; i < len(res); i++ {
 			res[i] = strings.TrimSpace(res[i])
 			if len(res[i]) == 0 {
@@ -55,7 +65,7 @@ func main() {
 			go launchConnection(gamePin, res[i])
 		}
 	} else {
-		count, err := strconv.Atoi(os.Args[3])
+		count, err = strconv.Atoi(os.Args[3])
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "invalid count:", os.Args[3])
 			os.Exit(1)
@@ -74,6 +84,7 @@ func main() {
 		}
 	}
 
+	fmt.Println("Bots Entered: ", count)
 	fmt.Println("Terminate this program to stop the automatons...")
 	wg.Wait()
 }
@@ -114,7 +125,35 @@ func launchConnection(gamePin int, nickname string) {
 			}
 		}
 		if action.Type == kahoot.QuestionAnswers {
-			quiz.Send(rand.Intn(action.NumAnswers))
+			answercount = action.NumAnswers
+			answer := rand.Intn(answercount)
+			if answer == 0 {
+				zero++
+			}
+			if answer == 1 {
+				one++
+			}
+			if answer == 2 {
+				two++
+			}
+			if answer == 3 {
+				three++
+			}
+			quiz.Send(answer)
+		}
+		if zero + one + two + three == count && zero + one + two + three != 0 {
+			fmt.Println("-----STATISTICS-----")
+			fmt.Println("Question Number: ", qid)
+			fmt.Println("Answer Count: ", answercount)
+			fmt.Println("Answer 0: ", zero)
+			fmt.Println("Answer 1: ", one)
+			fmt.Println("Answer 2: ", two)
+			fmt.Println("Answer 3: ", three)
+			zero = 0
+			one = 0
+			two = 0
+			three = 0
+			qid++
 		}
 	}
 }
