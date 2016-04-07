@@ -16,12 +16,10 @@ import (
 )
 
 var wg sync.WaitGroup
-var zero int
-var one int
-var two int
-var three int
+
 var qid int
 var answercount int
+var StatisticsChan = make(chan int, 0) //Statistics only work properly with kahoots that have non-randomized answers (the switch before the game starts on the teacher's computer)
 
 var count int
 
@@ -77,15 +75,34 @@ func main() {
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
 				fmt.Fprintln(os.Stderr, "valid delay strings include: 100ms, 0.1s")
-			os.Exit(1)
+				os.Exit(1)
 	                }
 	                time.Sleep(d)
 			go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
 		}
 	}
 
-	fmt.Println("Bots Entered: ", count)
+	fmt.Println("Bots Entered:", count)
 	fmt.Println("Terminate this program to stop the automatons...")
+
+	go func() {
+		for {
+			stats := make([]int, 4)
+			for i := 0; i < count; i++ {
+				stats[<-StatisticsChan]++
+			}
+
+			fmt.Println("-----STATISTICS-----")
+			fmt.Println("Question ID:", qid)
+			fmt.Println("Answer count:", answercount)
+			for i, x := range stats {
+				fmt.Println("Answer", i, ":", x)
+			}
+			qid++
+		}
+	}()
+
+
 	wg.Wait()
 }
 
@@ -127,33 +144,8 @@ func launchConnection(gamePin int, nickname string) {
 		if action.Type == kahoot.QuestionAnswers {
 			answercount = action.NumAnswers
 			answer := rand.Intn(answercount)
-			if answer == 0 {
-				zero++
-			}
-			if answer == 1 {
-				one++
-			}
-			if answer == 2 {
-				two++
-			}
-			if answer == 3 {
-				three++
-			}
 			quiz.Send(answer)
-		}
-		if zero + one + two + three == count && zero + one + two + three != 0 {
-			fmt.Println("-----STATISTICS-----")
-			fmt.Println("Question Number: ", qid)
-			fmt.Println("Answer Count: ", answercount)
-			fmt.Println("Answer 0: ", zero)
-			fmt.Println("Answer 1: ", one)
-			fmt.Println("Answer 2: ", two)
-			fmt.Println("Answer 3: ", three)
-			zero = 0
-			one = 0
-			two = 0
-			three = 0
-			qid++
+			StatisticsChan <- answer
 		}
 	}
 }
