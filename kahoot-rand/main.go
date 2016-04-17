@@ -53,7 +53,7 @@ func main() {
 				res = res[:len(res)-1]
 				i--
 			}
-			if err != nil {
+			if derr != nil {
 				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
 				fmt.Fprintln(os.Stderr, "valid delay strings include: 250ms, 1s")
 				os.Exit(1)
