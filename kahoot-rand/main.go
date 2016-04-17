@@ -36,6 +36,7 @@ func main() {
 		os.Exit(1)
 	}
 	delaystr := "100ms"
+	d, derr := time.ParseDuration(delaystr)
 
 	if len(os.Args) == 3 {
 		contents, err := ioutil.ReadFile(os.Args[2])
@@ -52,7 +53,6 @@ func main() {
 				res = res[:len(res)-1]
 				i--
 			}
-			d, err := time.ParseDuration(delaystr)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
 				fmt.Fprintln(os.Stderr, "valid delay strings include: 250ms, 1s")
