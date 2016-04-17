@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -9,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -17,11 +19,11 @@ import (
 
 var wg sync.WaitGroup
 
-var qid int
-var answercount int
-var StatisticsChan = make(chan int, 0) //Statistics only work properly with kahoots that have non-randomized answers (the switch before the game starts on the teacher's computer)
+const ConnectionDelay = time.Millisecond * 100
 
-var count int
+// TODO: fix statistics for randomized answers.
+var StatisticsChan = make(chan int, 0)
+var AnswerCount uint32
 
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
@@ -29,79 +31,31 @@ func main() {
 		fmt.Fprintln(os.Stderr, "       rand <game pin> <name_list.txt>")
 		os.Exit(1)
 	}
-	qid = 1
+
 	gamePin, err := strconv.Atoi(os.Args[1])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
 		os.Exit(1)
 	}
 
-	delaystr := "100ms"
-	d, derr := time.ParseDuration(delaystr)
-
-	if len(os.Args) == 3 {
-		contents, err := ioutil.ReadFile(os.Args[2])
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
-		res := strings.Split(string(contents), "\n")
-		count = len(res) - 1
-		for i := 0; i < len(res); i++ {
-			res[i] = strings.TrimSpace(res[i])
-			if len(res[i]) == 0 {
-				res[i] = res[len(res)-1]
-				res = res[:len(res)-1]
-				i--
-			}
-			if derr != nil {
-				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
-				fmt.Fprintln(os.Stderr, "valid delay strings include: 250ms, 1s")
-				os.Exit(1)
-			}
-			time.Sleep(d)
-			wg.Add(1)
-			go launchConnection(gamePin, res[i])
-		}
-	} else {
-		count, err = strconv.Atoi(os.Args[3])
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "invalid count:", os.Args[3])
-			os.Exit(1)
-		}
-		nickname := os.Args[2]
-		for i := 0; i < count; i++ {
-			wg.Add(1)
-			d, err := time.ParseDuration(delaystr)
-			if err != nil {
-				fmt.Fprintln(os.Stderr, "invalid delay string:", delaystr)
-				fmt.Fprintln(os.Stderr, "valid delay strings include: 100ms, 0.1s")
-				os.Exit(1)
-			}
-			time.Sleep(d)
-			go launchConnection(gamePin, nickname+strconv.Itoa(i+1))
-		}
+	nicknames, err := readNicknames()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
-	fmt.Println("Bots Entered:", count)
+	botCount := 0
+	for nickname := range nicknames {
+		wg.Add(1)
+		go launchConnection(gamePin, nickname)
+		time.Sleep(ConnectionDelay)
+		botCount++
+	}
+
+	fmt.Println("Entered with", botCount, "bots.")
 	fmt.Println("Terminate this program to stop the automatons...")
 
-	go func() {
-		for {
-			stats := make([]int, 4)
-			for i := 0; i < count; i++ {
-				stats[<-StatisticsChan]++
-			}
-
-			fmt.Println("-----STATISTICS-----")
-			fmt.Println("Question ID:", qid)
-			fmt.Println("Answer count:", answercount)
-			for i, x := range stats {
-				fmt.Println("Answer", i, ":", x)
-			}
-			qid++
-		}
-	}()
+	go printStatistics(botCount)
 
 	wg.Wait()
 }
@@ -130,7 +84,9 @@ func launchConnection(gamePin int, nickname string) {
 		fmt.Fprintln(os.Stderr, "failed to login:", err)
 		os.Exit(1)
 	}
+
 	quiz := kahoot.NewQuiz(conn)
+
 	for {
 		action, err := quiz.Receive()
 		if err != nil {
@@ -142,10 +98,63 @@ func launchConnection(gamePin int, nickname string) {
 			}
 		}
 		if action.Type == kahoot.QuestionAnswers {
-			answercount = action.NumAnswers
-			answer := rand.Intn(answercount)
+			atomic.StoreUint32(&AnswerCount, uint32(action.NumAnswers))
+			answer := rand.Intn(action.NumAnswers)
 			quiz.Send(answer)
 			StatisticsChan <- answer
 		}
 	}
+}
+
+func printStatistics(clientCount int) {
+	qid := 1
+	for {
+		stats := map[int]int{}
+		for i := 0; i < clientCount; i++ {
+			stats[<-StatisticsChan]++
+		}
+
+		answerCount := int(atomic.LoadUint32(&AnswerCount))
+
+		fmt.Println("-----STATISTICS-----")
+		fmt.Println("Question ID:", qid)
+		for i := 0; i < answerCount; i++ {
+			fmt.Println("Answer "+strconv.Itoa(i)+":", stats[i])
+		}
+		qid++
+	}
+}
+
+func readNicknames() (<-chan string, error) {
+	if len(os.Args) == 3 {
+		contents, err := ioutil.ReadFile(os.Args[2])
+		if err != nil {
+			return nil, err
+		}
+		nameLines := strings.Split(string(contents), "\n")
+		res := make(chan string, len(nameLines))
+		for _, line := range nameLines {
+			nickname := strings.TrimSpace(line)
+			if len(nickname) != 0 {
+				res <- nickname
+			}
+		}
+		close(res)
+		return res, nil
+	}
+
+	count, err := strconv.Atoi(os.Args[3])
+	if err != nil {
+		return nil, errors.New("invalid count: " + os.Args[3])
+	}
+
+	baseName := os.Args[2]
+	res := make(chan string)
+	go func() {
+		for i := 0; i < count; i++ {
+			res <- baseName + strconv.Itoa(i+1)
+		}
+		close(res)
+	}()
+	return res, nil
 }
