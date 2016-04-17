@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"net/http"
 	"strconv"
 	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
+
+var token string
 
 func main() {
 	if len(os.Args) != 3 {
@@ -22,7 +25,14 @@ func main() {
 	}
 	nickname := os.Args[2]
 
-	conn, err := kahoot.NewConn(gamePin)
+	http, err := http.Get("https://kahoot.it/reserve/session/"+strconv.Itoa(gamePin))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	token = http.Header.Get("X-Kahoot-Session-Token")
+
+	conn, err := kahoot.NewConn(gamePin, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)

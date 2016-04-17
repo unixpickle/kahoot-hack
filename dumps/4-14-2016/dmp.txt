@@ -1,0 +1,213 @@
+4-14-2016 Comet dump
+
+---INFORMATION---
+GAME PIN = 763589
+NAME = t3
+SERVER = openresty 1.7.7.1
+USER AGENT = Mozilla/5.0 (Linux; Android 4.4.2; en-us; SAMSUNG SCH-I545 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36
+---INFORMATION---
+
+HTTP GET https://kahoot.it/reserve/session/763589/?1460687923118
+
+GET https://kahoot.it/reserve/session/763589/?1460687923118
+Returns HTTP header "x-kahoot-session-token": 23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e
+and empty JSON: {}
+
+
+
+-----BEGIN COMET DUMP-----
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/handshake
+
+Client:
+
+[{ "advice": {"interval": 0, "timeout": 60000}, "channel": "meta/handshake", "ext": {"ack": true, "timesync": {"l": 60, "o": 456841, "tc": 1460688116415}}, "id": "36", "minimumVersion": 1.0, "supportedConnectionTypes": ["long-polling"], "version": 1.0}]
+HTTP 200 OK
+
+Server response:
+
+[{ "channel": "/meta/handshake", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"ack": true, "timesync": {"a": -31529, "p": 0, "tc": 1460688116415, "ts": 1460688604845}}, "id": "36", "minimumVersion": "1.0", "successful": true, "supportedConnectionTypes": ["websocket", "callback-polling", "long-polling"], "version": "1.0"}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client:
+
+[{ "channel": "/meta/unsubscribe", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"timesync": {"l": 1647, "o": 458405, "tc": 1460688148256}}, "id": "37", "subscription": "/service/controller"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel": "/meta/unsubscribe", "ext": {"timesync": {"a": -479, "p": 0, "tc": 1460688148256, "ts"; "ts": 1460688608787}}, "id": "37", "subscription": "/service/controller", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/connect
+
+Client: 
+
+[{"channel": "/meta/connect", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "connectionType": "long-polling", "ext": {"ack": 1, "timesync": {"l": 2497, "o": 459010, "tc": 1460688159638}}, "id": "44"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel": "/meta/connect", "ext": {"ack": 2, "timesync": {"a": 1388, "p": 30000, "tc": 1460688159638, "ts": 1460688619757}}, "id": "44", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client: 
+
+[{"channel": "/meta/unsubscribe", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"timesync": {"l": 1647, "o": 458405, "tc": 1460688148263}}, "id": "39", "subscription": "/service/status"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel": "/meta/unsubscribe", "ext": {"timesync": {"a": -12402, "p": 0, "tc": 1460688148263, "ts": 1460688620717}}, "id": "39", "subscription": "/service/status", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client: 
+
+[{"channel": "/meta/unsubscribe", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"timesync": {"l": 1647, "o": 458405, "tc": 1460688148265}}, "id": "40", "subscription": "/service/controller"}]
+HTTP 200 OK
+
+Server response: 
+
+[{"channel": "/meta/unsubscribe", "ext":{ "timesync": {"a": -15226, "p": 0, "tc": 1460688148265, "ts": 1460688623543}}, "id": "40", "subscription": "/service/controller", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client:
+
+[{"channel": "/meta/subscribe", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"timesync": {"l": 1647, "o": 458405, "tc": 1460688148267}}, "id": "41", "subscription": "/service/player"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel": "/meta/subscribe", "ext": {"timesync": {"a": -17279, "p": 0, "tc": 1460688148267, "ts": 1460688625598}}, "id": "41", "subscription": "/service/player", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client:
+
+[{"channel": "/meta/subscribe", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"timesync": {"l": 1647, "o": 458405, "tc": 1460688148268}}, "id": "42", "subscription": "/service/status"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel": "/meta/subscribe", "ext": {"timesync": {"a": -19439, "p": 0, "tc": 1460688148268, "ts": 1460688627759}}, "id": "42", "subscription": "/service/status", "successful": true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/connect
+
+Client:
+
+[{"channel": "/meta/connect", "clientId": "3e7s5txb9n4fufzhci6aqsdhuh17o", "ext": {"ack": 2, "timesync": {"l": 7496, "o", 463256, "tc": 1460688197216}}, "id": "45"}]
+HTTP 200 OK
+
+Server response:
+
+{["channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":2,"timesync":{"l":7496,"o":463256,"tc":1460688197216}},"id":"45"}]
+
+------------------------------------------------------------------------------------------------
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client:
+
+[{"channel":"/service/controller","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","data":{"gameid":763589,"host":"kahoot.it","name":"t3","type":"login"},"id":"46"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel":"/service/controller","id":"46","successful":true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/connect
+
+Client: 
+
+[{"advice":{"timeout":0},"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":2,"timesync":{"l":7496,"o":463256,"tc":1460688237291}},"id":"50"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel":"/service/status","data":{"status":"ACTIVE","type":"status"}},{"channel":"/service/controller","data":{"cid":1633739223,"type":"loginResponse"}},{"channel":"/service/player","data":{"content":"{\"playerName\":\"t3\",\"quizType\":\"quiz\"}","id":14,"type":"message"}},{"advice":{"interval":0,"reconnect":"retry","timeout":30000},"channel":"/meta/connect","ext":{"ack":4,"timesync":{"a":9018,"p":0,"tc":1460688237291,"ts":1460688699025}},"id":"50","successful":true}]
+
+-------------------------------------------------------------------------------------------------
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/
+
+Client:
+
+[{"channel":"/meta/unsubscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244866}},"id":"52","subscription":"/service/controller"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel":"/meta/unsubscribe","ext":{"timesync":{"a":266,"p":0,"tc":1460688244866,"ts":1460688715837}},"id":"52","subscription":"/service/controller","successful":true}]
+
+POST https://kahoot.it/cometd/763589/23f073fb4bf0a0f8c3dcb33add0de40c1ca86d901d929b5195a7e1101f1bc037c04c886c004f39c3b8eaea0b7dbdb37e/connect
+
+Client:
+
+[{"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":8,"timesync":{"l":5436,"o":461102,"tc":1460688258069}},"id":"63"}]
+HTTP 200 OK
+
+Server response:
+
+[{"channel":"/service/controller","data":{"cid":1633739223,"type":"loginResponse"}},{"channel":"/meta/connect","ext":{"ack":9,"timesync":{"a":8795,"p":4502,"tc":1460688258069,"ts":1460688715812}},"id":"63","successful":true}]
+
+--------------------------------------------------------------------------------------------------
+
+Client:
+
+[{"channel":"/meta/unsubscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244872}},"id":"53","subscription":"/service/player"}]
+[{"channel":"/meta/unsubscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244873}},"id":"54","subscription":"/service/status"}]
+
+Server responses:
+
+[{"channel":"/meta/unsubscribe","ext":{"timesync":{"a":-857,"p":0,"tc":1460688244872,"ts":1460688716966}},"id":"53","subscription":"/service/player","successful":true}]
+[{"channel":"/meta/unsubscribe","ext":{"timesync":{"a":-2211,"p":0,"tc":1460688244873,"ts":1460688718321}},"id":"54","subscription":"/service/status","successful":true}]
+
+---------------------------------------------------------------------------------------------------
+
+Client:
+
+[{"channel":"/meta/subscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244875}},"id":"55","subscription":"/service/controller"}]
+[{"channel":"/meta/subscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244876}},"id":"56","subscription":"/service/player"}]
+[{"channel":"/meta/subscribe","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","ext":{"timesync":{"l":7869,"o":463368,"tc":1460688244877}},"id":"57","subscription":"/service/status"}]
+
+Server responses:
+
+[{"channel":"/meta/subscribe","ext":{"timesync":{"a":-2698,"p":0,"tc":1460688244875,"ts":1460688718810}},"id":"55","subscription":"/service/controller","successful":true}]
+[{"channel":"/meta/subscribe","ext":{"timesync":{"a":-3339,"p":0,"tc":1460688244876,"ts":1460688719452}},"id":"56","subscription":"/service/player","successful":true}]
+[{"channel":"/meta/subscribe","ext":{"timesync":{"a":-3649,"p":0,"tc":1460688244877,"ts":1460688719763}},"id":"57","subscription":"/service/status","successful":true}]
+
+----------------------------------------------------------------------------------------------------
+
+Client:
+
+[{"channel":"/service/controller","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","data":{"cid":1633739223,"gameid":763589,"host":"kahoot.it","type":"relogin"},"id":"58"}]
+[{"channel":"/service/controller","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","data":{"content":"","gameid":763589,"host":"kahoot.it","id":16,"type":"message"},"id":"64"}]
+
+
+Server responses:
+
+[{"channel":"/service/controller","id":"58","successful":true}]
+[{"channel":"/service/controller","id":"64","successful":true}]
+
+-----------------------------------------------------------------------------------------------------
+
+Client:
+
+[{"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":9,"timesync":{"l":5437,"o":461963,"tc":1460688263743}},"id":"65"}]
+[{"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":10,"timesync":{"l":5266,"o":461803,"tc":1460688264708}},"id":"66"}]
+[{"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":11,"timesync":{"l":5668,"o":461297,"tc":1460688304532}},"id":"67"}]
+[{"channel":"/meta/connect","clientId":"3e7s5txb9n4fufzhci6aqsdhuh17o","connectionType":"long-polling","ext":{"ack":12,"timesync":{"l":5686,"o":461330,"tc":1460688336088}},"id":"68"}]
+
+
+Server responses:
+
+[{"channel":"/service/player","data":{"content":"{\"state\":0,\"data\":{},\"defaultQuizData\":{\"quizType\":\"quiz\"},\"wasControllerKicked\":false,\"didControllerLeave\":false,\"quizType\":\"quiz\"}","id":17,"type":"message"}},{"channel":"/meta/connect","ext":{"ack":10,"timesync":{"a":10241,"p":63,"tc":1460688263743,"ts":1460688720902}},"id":"65","successful":true}]
+[{"channel":"/meta/connect","ext":{"ack":11,"timesync":{"a":10009,"p":30000,"tc":1460688264708,"ts":1460688721768}},"id":"66","successful":true}]
+[{"channel":"/meta/connect","ext":{"ack":12,"timesync":{"a":8678,"p":30000,"tc":1460688304532,"ts":1460688762819}},"id":"67","successful":true}]
+[{"channel":"/meta/connect","ext":{"ack":13,"timesync":{"a":10052,"p":30000,"tc":1460688336088,"ts":1460688793052}},"id":"68","successful":true}]
+
+... on and on ...
+
