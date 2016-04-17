@@ -2,7 +2,6 @@ package kahoot
 
 import (
 	"errors"
-	//"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -35,13 +34,18 @@ type Conn struct {
 
 // NewConn connects to the kahoot server and performs a handshake
 // using a given game pin.
-func NewConn(gameId int, token string) (*Conn, error) {
+func NewConn(gameId int) (*Conn, error) {
+	token, err := gameSessionToken(gameId)
+	if err != nil {
+		return nil, errors.New("failed to create session: " + err.Error())
+	}
+
 	conn, err := net.Dial("tcp", "kahoot.it:443")
 	if err != nil {
 		return nil, err
 	}
 
-	url, _ := url.Parse("wss://kahoot.it/cometd/"+strconv.Itoa(gameId)+"/"+token)
+	url, _ := url.Parse("wss://kahoot.it/cometd/" + strconv.Itoa(gameId) + "/" + token)
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
 	reqHeader.Set("Cookie", "no.mobitroll.session="+strconv.Itoa(gameId))

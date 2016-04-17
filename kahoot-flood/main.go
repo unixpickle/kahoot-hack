@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -13,29 +12,21 @@ import (
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
-var token string
-
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
 		fmt.Fprintln(os.Stderr, "Usage: flood <game pin> <nickname prefix> <count>")
 		fmt.Fprintln(os.Stderr, "       flood <game pin> <name_list.txt>")
 		os.Exit(1)
 	}
+
 	gamePin, err := strconv.Atoi(os.Args[1])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
 		os.Exit(1)
 	}
 
-	http, err := http.Get("https://kahoot.it/reserve/session/"+strconv.Itoa(gamePin))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	token = http.Header.Get("X-Kahoot-Session-Token")
-
 	for _, nickname := range nicknames() {
-		conn, err := kahoot.NewConn(gamePin, token)
+		conn, err := kahoot.NewConn(gamePin)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "failed to connect:", err)
 			os.Exit(1)
