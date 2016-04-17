@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -22,6 +23,7 @@ var answercount int
 var StatisticsChan = make(chan int, 0) //Statistics only work properly with kahoots that have non-randomized answers (the switch before the game starts on the teacher's computer)
 
 var count int
+var token string
 
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
@@ -35,8 +37,16 @@ func main() {
 		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
 		os.Exit(1)
 	}
+
 	delaystr := "100ms"
 	d, derr := time.ParseDuration(delaystr)
+
+	http, err := http.Get("https://kahoot.it/reserve/session/"+strconv.Itoa(gamePin))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	token = http.Header.Get("X-Kahoot-Session-Token")
 
 	if len(os.Args) == 3 {
 		contents, err := ioutil.ReadFile(os.Args[2])
@@ -109,7 +119,7 @@ func main() {
 func launchConnection(gamePin int, nickname string) {
 	defer wg.Done()
 
-	conn, err := kahoot.NewConn(gamePin)
+	conn, err := kahoot.NewConn(gamePin, token)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)

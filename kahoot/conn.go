@@ -35,13 +35,13 @@ type Conn struct {
 
 // NewConn connects to the kahoot server and performs a handshake
 // using a given game pin.
-func NewConn(gameId int) (*Conn, error) {
+func NewConn(gameId int, token string) (*Conn, error) {
 	conn, err := net.Dial("tcp", "kahoot.it:443")
 	if err != nil {
 		return nil, err
 	}
 
-	url, _ := url.Parse("wss://kahoot.it/cometd")
+	url, _ := url.Parse("wss://kahoot.it/cometd/"+strconv.Itoa(gameId)+"/"+token)
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
 	reqHeader.Set("Cookie", "no.mobitroll.session="+strconv.Itoa(gameId))
