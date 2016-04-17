@@ -21,7 +21,6 @@ var wg sync.WaitGroup
 
 const ConnectionDelay = time.Millisecond * 100
 
-// TODO: fix statistics for randomized answers.
 var StatisticsChan = make(chan int, 0)
 var AnswerCount uint32
 
@@ -100,7 +99,7 @@ func launchConnection(gamePin int, nickname string) {
 		if action.Type == kahoot.QuestionAnswers {
 			atomic.StoreUint32(&AnswerCount, uint32(action.NumAnswers))
 			answer := rand.Intn(action.NumAnswers)
-			quiz.Send(answer)
+			quiz.Send(action.AnswerMap[answer])
 			StatisticsChan <- answer
 		}
 	}

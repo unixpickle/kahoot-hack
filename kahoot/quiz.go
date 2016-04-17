@@ -3,6 +3,7 @@ package kahoot
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 )
 
 type QuizActionType int
@@ -16,6 +17,7 @@ type QuizAction struct {
 	Type       QuizActionType
 	NumAnswers int
 	Index      int
+	AnswerMap  map[int]int
 }
 
 type Quiz struct {
@@ -30,6 +32,7 @@ func NewQuiz(c *Conn) *Quiz {
 // This may be a QuestionIntro, indicating a new question is starting,
 // or QuestionAnswers, indicating that the user may now submit an answer.
 func (q *Quiz) Receive() (*QuizAction, error) {
+PacketLoop:
 	for {
 		packet, err := q.conn.Receive("/service/player")
 		if err != nil {
@@ -52,6 +55,8 @@ func (q *Quiz) Receive() (*QuizAction, error) {
 			continue
 		} else if numAnswers, ok := numArray[int(questionIndex)].(float64); !ok {
 			continue
+		} else if answerMap, ok := content["answerMap"].(map[string]interface{}); !ok {
+			continue
 		} else {
 			var t QuizActionType
 			if id == 1 {
@@ -61,10 +66,25 @@ func (q *Quiz) Receive() (*QuizAction, error) {
 			} else {
 				continue
 			}
+
+			intAnswerMap := map[int]int{}
+			for key, val := range answerMap {
+				intKey, err := strconv.Atoi(key)
+				if err != nil {
+					continue PacketLoop
+				}
+				if num, ok := val.(float64); !ok {
+					continue PacketLoop
+				} else {
+					intAnswerMap[intKey] = int(num)
+				}
+			}
+
 			return &QuizAction{
 				Type:       t,
 				NumAnswers: int(numAnswers),
 				Index:      int(questionIndex),
+				AnswerMap:  intAnswerMap,
 			}, nil
 		}
 	}
