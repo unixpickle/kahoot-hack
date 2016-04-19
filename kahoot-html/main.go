@@ -23,14 +23,14 @@ func main() {
 	}
 	nickname := os.Args[2]
 
-	for _, prefix := range []string{"<h1>", "<u>", "<h2>", "<marquee>", "<button>",
-		"<input>", "<pre>", "<textarea>"} {
+	for _, prefix := range []string{"h1", "u", "h2", "marquee", "button",
+		"input", "pre", "textarea", "b", "i"} {
 		if conn, err := kahoot.NewConn(gamePin); err != nil {
 			fmt.Fprintln(os.Stderr, "failed to connect:", err)
 			os.Exit(1)
 		} else {
 			defer conn.GracefulClose()
-			conn.Login(prefix + nickname)
+			conn.Login("<<a>" + prefix + ">" + nickname)
 		}
 	}
 
