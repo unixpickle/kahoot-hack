@@ -43,20 +43,36 @@ func decipherToken(xToken, challenge string) (string, error) {
 		return "", fmt.Errorf("parse session token: %s", err)
 	}
 
-	challengeExpr := regexp.MustCompile("^\\(([0-9]*) \\+ ([0-9]*)\\) \\* ([0-9]*)$")
-	match := challengeExpr.FindStringSubmatch(challenge)
-	if match == nil {
-		return "", fmt.Errorf("unsupported challenge: %s", challenge)
+	maskNum, err := computeChallenge(challenge)
+	if err != nil {
+		return "", err
 	}
-
-	num1, _ := strconv.Atoi(match[1])
-	num2, _ := strconv.Atoi(match[2])
-	num3, _ := strconv.Atoi(match[3])
-	mask := []byte(strconv.Itoa((num1 + num2) * num3))
+	mask := []byte(strconv.Itoa(maskNum))
 
 	for i := range rawToken {
 		rawToken[i] ^= mask[i%len(mask)]
 	}
 
 	return string(rawToken), nil
+}
+
+func computeChallenge(ch string) (int, error) {
+	challengeExpr := regexp.MustCompile("^\\(([0-9]*) \\+ ([0-9]*)\\) \\* ([0-9]*)$")
+	match := challengeExpr.FindStringSubmatch(ch)
+	if match != nil {
+		num1, _ := strconv.Atoi(match[1])
+		num2, _ := strconv.Atoi(match[2])
+		num3, _ := strconv.Atoi(match[3])
+		return (num1 + num2) * num3, nil
+	}
+	challengeExpr = regexp.MustCompile("^([0-9]*) \\* \\(([0-9]*) \\+ ([0-9]*)\\)$")
+	match = challengeExpr.FindStringSubmatch(ch)
+	if match != nil {
+		num1, _ := strconv.Atoi(match[1])
+		num2, _ := strconv.Atoi(match[2])
+		num3, _ := strconv.Atoi(match[3])
+		return num1 * (num2 + num3), nil
+	}
+	return 0, fmt.Errorf("unsupported challenge: %s", ch)
+
 }
