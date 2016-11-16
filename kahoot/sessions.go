@@ -14,7 +14,7 @@ import (
 
 var bruteForceErr = errors.New("not exactly one possible mask")
 
-const tokenAttempts = 20
+const tokenAttempts = 40
 
 func gameSessionToken(gamePin int) (string, error) {
 	for i := 0; i < tokenAttempts; i++ {
@@ -75,7 +75,7 @@ func decipherToken(xToken, challenge string) (string, error) {
 }
 
 func computeChallenge(ch string) (int, error) {
-	challengeExpr := regexp.MustCompile("^\\(([0-9]*) \\+ ([0-9]*)\\) \\* ([0-9]*)$")
+	challengeExpr := regexp.MustCompile("^\\(([0-9]*)\\s*\\+\\s*([0-9]*)\\)\\s*\\*\\s*([0-9]*)$")
 	match := challengeExpr.FindStringSubmatch(ch)
 	if match != nil {
 		num1, _ := strconv.Atoi(match[1])
@@ -83,7 +83,7 @@ func computeChallenge(ch string) (int, error) {
 		num3, _ := strconv.Atoi(match[3])
 		return (num1 + num2) * num3, nil
 	}
-	challengeExpr = regexp.MustCompile("^([0-9]*) \\* \\(([0-9]*) \\+ ([0-9]*)\\)$")
+	challengeExpr = regexp.MustCompile("^([0-9]*)\\s*\\*\\s*\\(([0-9]*)\\s*\\+\\s*([0-9]*)\\)$")
 	match = challengeExpr.FindStringSubmatch(ch)
 	if match != nil {
 		num1, _ := strconv.Atoi(match[1])
