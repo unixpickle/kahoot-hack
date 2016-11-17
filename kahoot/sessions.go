@@ -44,6 +44,9 @@ func attemptGameSessionToken(gamePin int) (string, error) {
 		Challenge string `json:"challenge"`
 	}
 	if err := json.Unmarshal(body, &bodyObj); err != nil {
+		if string(body) == "Not found" {
+			return "", fmt.Errorf("game pin not found: %d", gamePin)
+		}
 		return "", fmt.Errorf("parse session challenge: %s", err)
 	}
 
