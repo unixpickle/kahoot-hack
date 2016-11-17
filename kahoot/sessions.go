@@ -117,14 +117,10 @@ LengthLoop:
 }
 
 func possibleMaskByte(rawToken []byte, chLen, byteIdx int) byte {
-	start := 0
-	if byteIdx == 0 {
-		start = 1
-	}
 	possibs := []byte{}
 PossibilityLoop:
-	for b := start; b <= 9; b++ {
-		numChar := byte(b) + '0'
+	for _, r := range "-0123456789." {
+		numChar := byte(r)
 		for i := byteIdx; i < len(rawToken); i += chLen {
 			masked := rawToken[i] ^ numChar
 			if !((masked >= 'a' && masked <= 'f') || (masked >= '0' && masked <= '9')) {
