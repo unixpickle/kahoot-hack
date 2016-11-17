@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 )
@@ -18,15 +19,19 @@ const tokenAttempts = 40
 
 func gameSessionToken(gamePin int) (string, error) {
 	for i := 0; i < tokenAttempts; i++ {
-		token, err := attemptGameSessionToken(gamePin)
+		token, err := attemptGameSessionToken(gamePin, false)
 		if err != bruteForceErr {
 			return token, err
 		}
 	}
+	token, err := attemptGameSessionToken(gamePin, true)
+	if err == nil {
+		return token, nil
+	}
 	return "", errors.New("could not defeat session challenge")
 }
 
-func attemptGameSessionToken(gamePin int) (string, error) {
+func attemptGameSessionToken(gamePin int, useEval bool) (string, error) {
 	resp, err := http.Get("https://kahoot.it/reserve/session/" + strconv.Itoa(gamePin))
 	if resp != nil {
 		defer resp.Body.Close()
@@ -50,10 +55,10 @@ func attemptGameSessionToken(gamePin int) (string, error) {
 		return "", fmt.Errorf("parse session challenge: %s", err)
 	}
 
-	return decipherToken(token, bodyObj.Challenge)
+	return decipherToken(token, bodyObj.Challenge, useEval)
 }
 
-func decipherToken(xToken, challenge string) (string, error) {
+func decipherToken(xToken, challenge string, useEval bool) (string, error) {
 	r := bytes.NewReader([]byte(xToken))
 	base64Dec := base64.NewDecoder(base64.StdEncoding, r)
 	rawToken, err := ioutil.ReadAll(base64Dec)
@@ -61,14 +66,13 @@ func decipherToken(xToken, challenge string) (string, error) {
 		return "", fmt.Errorf("parse session token: %s", err)
 	}
 
-	maskNum, err := computeChallenge(challenge)
+	mask, err := computeChallenge(challenge, useEval)
 	if err != nil {
-		maskNum, err = bruteForceChallenge(rawToken)
+		mask, err = bruteForceChallenge(rawToken)
 		if err != nil {
 			return "", err
 		}
 	}
-	mask := []byte(strconv.Itoa(maskNum))
 
 	for i := range rawToken {
 		rawToken[i] ^= mask[i%len(mask)]
@@ -77,14 +81,31 @@ func decipherToken(xToken, challenge string) (string, error) {
 	return string(rawToken), nil
 }
 
-func computeChallenge(ch string) (int, error) {
+func computeChallenge(ch string, useEval bool) ([]byte, error) {
+	if useEval {
+		evalURL := url.URL{
+			Scheme:   "http",
+			Host:     "safeval.pw",
+			Path:     "/eval",
+			RawQuery: url.Values{"code": []string{ch}}.Encode(),
+		}
+		resp, err := http.Get(evalURL.String())
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		if err != nil {
+			return nil, err
+		}
+		return ioutil.ReadAll(resp.Body)
+	}
+
 	challengeExpr := regexp.MustCompile("^\\(([0-9]*)\\s*\\+\\s*([0-9]*)\\)\\s*\\*\\s*([0-9]*)$")
 	match := challengeExpr.FindStringSubmatch(ch)
 	if match != nil {
 		num1, _ := strconv.Atoi(match[1])
 		num2, _ := strconv.Atoi(match[2])
 		num3, _ := strconv.Atoi(match[3])
-		return (num1 + num2) * num3, nil
+		return []byte(strconv.Itoa((num1 + num2) * num3)), nil
 	}
 	challengeExpr = regexp.MustCompile("^([0-9]*)\\s*\\*\\s*\\(([0-9]*)\\s*\\+\\s*([0-9]*)\\)$")
 	match = challengeExpr.FindStringSubmatch(ch)
@@ -92,12 +113,12 @@ func computeChallenge(ch string) (int, error) {
 		num1, _ := strconv.Atoi(match[1])
 		num2, _ := strconv.Atoi(match[2])
 		num3, _ := strconv.Atoi(match[3])
-		return num1 * (num2 + num3), nil
+		return []byte(strconv.Itoa(num1 * (num2 + num3))), nil
 	}
-	return 0, fmt.Errorf("unsupported challenge: %s", ch)
+	return nil, fmt.Errorf("unsupported challenge: %s", ch)
 }
 
-func bruteForceChallenge(rawToken []byte) (int, error) {
+func bruteForceChallenge(rawToken []byte) ([]byte, error) {
 	var possibilities [][]byte
 LengthLoop:
 	for n := 1; n < 9; n++ {
@@ -111,9 +132,9 @@ LengthLoop:
 		possibilities = append(possibilities, possible)
 	}
 	if len(possibilities) != 1 {
-		return 0, bruteForceErr
+		return nil, bruteForceErr
 	}
-	return strconv.Atoi(string(possibilities[0]))
+	return possibilities[0], nil
 }
 
 func possibleMaskByte(rawToken []byte, chLen, byteIdx int) byte {
