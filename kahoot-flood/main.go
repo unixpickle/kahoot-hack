@@ -7,10 +7,13 @@ import (
 	"os/signal"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
+
+const ConcurrencyCount = 4
 
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
@@ -25,15 +28,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	var dieLock sync.Mutex
+	connChan := make(chan *kahoot.Conn)
+	for i := 0; i < ConcurrencyCount; i++ {
+		go func() {
+			for {
+				conn, err := kahoot.NewConn(gamePin)
+				if err != nil {
+					dieLock.Lock()
+					fmt.Fprintln(os.Stderr, "failed to connect:", err)
+					os.Exit(1)
+					dieLock.Unlock()
+				}
+				connChan <- conn
+			}
+		}()
+	}
+
 	for _, nickname := range nicknames() {
-		conn, err := kahoot.NewConn(gamePin)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "failed to connect:", err)
-			os.Exit(1)
-		} else {
-			defer conn.GracefulClose()
-			conn.Login(nickname)
-		}
+		conn := <-connChan
+		defer conn.GracefulClose()
+		conn.Login(nickname)
 	}
 
 	fmt.Println("Kill this process to deauthenticate.")
