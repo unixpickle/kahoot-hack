@@ -77,5 +77,8 @@ func computeChallenge(ch string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("server failed to evaluate: " + ch)
+	}
 	return ioutil.ReadAll(resp.Body)
 }
