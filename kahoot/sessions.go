@@ -131,6 +131,13 @@ LengthLoop:
 		}
 		possibilities = append(possibilities, possible)
 	}
+	for i := 1; i < len(possibilities); i++ {
+		if masksEquivalent(possibilities[0], possibilities[i]) {
+			possibilities[i] = possibilities[len(possibilities)-1]
+			possibilities = possibilities[:len(possibilities)-1]
+			i--
+		}
+	}
 	if len(possibilities) != 1 {
 		return nil, bruteForceErr
 	}
@@ -154,4 +161,17 @@ PossibilityLoop:
 		return 0
 	}
 	return possibs[0]
+}
+
+func masksEquivalent(m1, m2 []byte) bool {
+	rep1 := append([]byte{}, m1...)
+	rep2 := append([]byte{}, m2...)
+	for len(rep1) != len(rep2) {
+		if len(rep1) < len(rep2) {
+			rep1 = append(rep1, m1...)
+		} else {
+			rep2 = append(rep2, m2...)
+		}
+	}
+	return bytes.Equal(rep1, rep2)
 }
