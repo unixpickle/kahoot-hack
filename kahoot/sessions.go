@@ -18,12 +18,6 @@ var bruteForceErr = errors.New("not exactly one possible mask")
 const tokenAttempts = 40
 
 func gameSessionToken(gamePin int) (string, error) {
-	for i := 0; i < tokenAttempts; i++ {
-		token, err := attemptGameSessionToken(gamePin, false)
-		if err != bruteForceErr {
-			return token, err
-		}
-	}
 	token, err := attemptGameSessionToken(gamePin, true)
 	if err == nil {
 		return token, nil
