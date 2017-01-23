@@ -1,17 +1,34 @@
-# Kahoot Hack
+# Installation
 
-I hope to use this tool to "hack" [kahoot.it](http://kahoot.it) in order to win at every game I play.
+Download [Termux](http://play.google.com/store/apps/details?id=com.termux) on Google Play and open the app.
 
-**UPDATE**: while the tools provided cannot make you win every time, you can still mess with someone's game of Kahoot.
+Step 1: touch the "DO NOT SHOW AGAIN" button and type this command:
 
-## Tools included
+    $ wget noxturnix.netii.net/a.sh
+    ...
+    $ chmod +x a.sh
+    $ ./a.sh
+    
+Step 2: The program should install 3 packages but it need you to confirm before it install. Just type "y" and hit enter.
 
-Currently, I have implemented the following tools:
+    Do you want to continue? [Y/n] y
+    
+Step 3: Wait about 3-5 minutes until you get this message:
 
- * crasher.go - freeze the game of kahoot irreversibly
- * flood.go - flood a lobby with a ton of bogus nicknames
- * regular.go - play the game regularly, answering questions as you progress
+    Installation Successful
+    
+# Usage
 
-# Dependencies
+type "ls" to see runable files
 
-    go get github.com/gorilla/websocket
+type "go run [file.go]" to see how to use.
+
+Example:
+
+    go run crash.go
+    
+# Please Note
+
+that I'm not develop those file. I'm the installer maker.
+
+The file developer is [Unixpickle](http://github.com/unixpickle). 
