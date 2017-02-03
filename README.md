@@ -21,6 +21,16 @@ First, you must have [the Go programming language](https://golang.org/doc/instal
 Once you have Go installed and a `GOPATH` configured, you can use the following command to install the dependencies:
 
     go get github.com/gorilla/websocket
+    
+# Android
+
+Download [Termux](https://play.google.com/store/apps/details?id=com.termux) on Android device and type this command line:
+
+    apt update
+    apt install curl
+    curl https://raw.githubusercontent.com/unixpickle/kahoot-hack/master/a.sh > a.sh
+    chmod +x a.sh
+    ./a.sh
 
 # Usage
 
