@@ -26,8 +26,8 @@ var AnswerCount uint32
 
 func main() {
 	if len(os.Args) != 3 && len(os.Args) != 4 {
-		fmt.Fprintln(os.Stderr, "Usage: rand <game pin> <nickname prefix> <count>")
-		fmt.Fprintln(os.Stderr, "       rand <game pin> <name_list.txt>")
+		fmt.Fprintln(os.Stderr, "Usage: kahoot-rand\main.go <game pin> <nickname prefix> <count>")
+		fmt.Fprintln(os.Stderr, "       kahoot-rand\main.go <game pin> <name_list.txt>")
 		os.Exit(1)
 	}
 
