@@ -22,5 +22,5 @@ mkdir ../usr/etc/profile.d
 echo "export GOPATH=/data/data/com.termux/files/usr" >> ../usr/etc/profile.d/kahoot-hack-config.sh
 chmod +x ../usr/etc/profile.d/kahoot-hack-config.sh
 rm and_kh_tmp1
-rm a.sh
+rm kh-tmux-setup.sh
 echo "Installation Successful. Please restart the app by typing 'exit' and open the app again."
