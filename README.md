@@ -28,7 +28,7 @@ Download [Termux](https://play.google.com/store/apps/details?id=com.termux) on A
 
     apt update
     apt install curl
-    curl https://raw.githubusercontent.com/unixpickle/kahoot-hack/master/a.sh > a.sh
+    curl https://raw.githubusercontent.com/unixpickle/kahoot-hack/master/kh-tmux-setup.sh > kh-tmux-setup.sh
     chmod +x a.sh
     ./a.sh
 
