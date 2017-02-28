@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 	"syscall"
-
+	"math"
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
@@ -66,10 +66,20 @@ func nicknames() []string {
 		}
 		base := os.Args[2]
 		res := make([]string, count)
+		w := ""
+		k := 0
+		r := 0
+		hi :=[20]string{" "," "," ","᠎"," "," "," "," "," "," "," "," "," "," "," "," ","　"," "," "," "}
 		for x := 0; x < count; x++ {
-			res[x] = base + strconv.Itoa(x+1)
+			k =x
+			w=""
+			for y := int(math.Logb(float64(x))/4); y > 0; y-- {
+					r = int(k)/int(math.Pow(20,float64(y)))
+					k = int(k)-int(r)*int(math.Pow(20,float64(y)))
+					w = hi[int(r)] + w
+				}
+			res[x] = base + w
 		}
-		return res
 	}
 
 	contents, err := ioutil.ReadFile(os.Args[2])
