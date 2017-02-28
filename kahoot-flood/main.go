@@ -80,6 +80,7 @@ func nicknames() []string {
 				}
 			res[x] = base + w
 		}
+		return res
 	}
 
 	contents, err := ioutil.ReadFile(os.Args[2])
