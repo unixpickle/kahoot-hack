@@ -19,4 +19,4 @@ mv /data/data/com.termux/files/usr/src/github.com/unixpickle/kahoot-hack/kahoot-
 gcc /data/data/com.termux/files/usr/src/github.com/unixpickle/kahoot-hack/Android/kahoot-hack.c -o /data/data/com.termux/files/usr/bin/kahoot-hack
 rm /data/data/com.termux/files/home/kh-tmux-setup.sh
 clear
-printf "Installation Successful.\nTo use the hack, type 'kahoot-hack' in the command line.\n"
+printf "Installation Successful. Please restart the app by typing 'exit' and open the app again.\nAfter restarted, type 'kahoot-hack' in the command line to use the hack.\n"
