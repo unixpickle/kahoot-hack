@@ -29,7 +29,7 @@ if (hknm==1){
     strcat(cmd,pin);
     strcat(cmd,spc);
     strcat(cmd,nls);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }else{
     printf("Nickname prefix [John]: ");
     scanf("%s",&nme);
@@ -41,7 +41,7 @@ if (hknm==1){
     strcat(cmd,nme);
     strcat(cmd,spc);
     strcat(cmd,nob);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }
   }else if (hknm==2){
     printf("Game pin [123456]: ");
@@ -55,7 +55,7 @@ if (hknm==1){
       strcat(cmd,pin);
       strcat(cmd,spc);
       strcat(cmd,nls);
-      printf("System will exec this: %s",cmd);
+      system(cmd);
     }else{
       printf("Nickname prefix [John]: ");
       scanf("%s",&nme);
@@ -67,7 +67,7 @@ if (hknm==1){
       strcat(cmd,nme);
       strcat(cmd,spc);
       strcat(cmd,nob);
-      printf("System will exec this: %s",cmd);
+      system(cmd);
     }
   }else if (hknm==3){
     printf("Game pin [123456]: ");
@@ -82,7 +82,7 @@ if (hknm==1){
     strcat(cmd,nme);
     strcat(cmd,spc);
     strcat(cmd,nob);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }else if (hknm==4){
     printf("Game pin [123456]: ");
     scanf("%s",&pin);
@@ -92,7 +92,7 @@ if (hknm==1){
     strcat(cmd,pin);
     strcat(cmd,spc);
     strcat(cmd,nme);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }else if (hknm==5){
     printf("Game pin [123456]: ");
     scanf("%s",&pin);
@@ -102,7 +102,7 @@ if (hknm==1){
     strcat(cmd,pin);
     strcat(cmd,spc);
     strcat(cmd,nme);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }else if (hknm==6){
     printf("Game pin [123456]: ");
     scanf("%s",&pin);
@@ -112,7 +112,7 @@ if (hknm==1){
     strcat(cmd,pin);
     strcat(cmd,spc);
     strcat(cmd,nme);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }else if (hknm==7){
     printf("Game pin [123456]: ");
     scanf("%s",&pin);
@@ -122,6 +122,6 @@ if (hknm==1){
     strcat(cmd,pin);
     strcat(cmd,spc);
     strcat(cmd,spt);
-    printf("System will exec this: %s",cmd);
+    system(cmd);
   }
 }
