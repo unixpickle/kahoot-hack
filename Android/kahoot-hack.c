@@ -2,7 +2,7 @@
 #include<string.h>
 int main(){
 int hknm,pass;
-char spt[20],nob[50],pin[10],spc[2]=" ",cmd[200],nls[100],nme[20],cnl[1],cnly[2]="y",cnlY[2]="Y";
+char Script[20],Count[50],Pin[10],Space[2]=" ",Command[200],NameList[100],Name[20],UseNameList[1],yes[2]="y",Yes[2]="Y";
 printf("\n1. kahoot-flood - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames \"alex1\", \"alex2\", ..., \"alex100\".\n\n");
 printf("2. kahoot-rand - connect to a game an arbitrary number of times (e.g. 100) and answer each question randomly. If you connect with enough names, one of them is bound to win.\n\n");
 printf("3. kahoot-profane - circumvent Kahoot's profanity detector, allowing you to join with any nickname (but with extra length restrictions; it has to be short).\n\n");
@@ -19,109 +19,109 @@ do{
 }while (pass!=1);
 if (hknm==1){
   printf("Game pin [123456]: ");
-  scanf("%s",&pin);
+  scanf("%s",&Pin);
   printf("Use custom name list? [y/N]: ");
-  scanf("%s",&cnl);
-  if (strcmp(cnl,cnly)==0||strcmp(cnl,cnlY)==0){
+  scanf("%s",&UseNameList);
+  if (strcmp(UseNameList,yes)==0||strcmp(UseNameList,Yes)==0){
     printf("Filename [name-list.txt]: ");
-    scanf("%s",&nls);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/flood.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nls);
-    system(cmd);
+    scanf("%s",&NameList);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/flood.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,NameList);
+    system(Command);
   }else{
     printf("Nickname prefix [John]: ");
-    scanf("%s",&nme);
+    scanf("%s",&Name);
     printf("Count [20]: ");
-    scanf("%s",&nob);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/flood.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nme);
-    strcat(cmd,spc);
-    strcat(cmd,nob);
-    system(cmd);
+    scanf("%s",&Count);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/flood.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Name);
+    strcat(Command,Space);
+    strcat(Command,Count);
+    system(Command);
   }
   }else if (hknm==2){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Use custom name list? [y/N]: ");
-    scanf("%s",&cnl);
-    if (strcmp(cnl,cnly)==0||strcmp(cnl,cnlY)==0){
+    scanf("%s",&UseNameList);
+    if (strcmp(UseNameList,yes)==0||strcmp(UseNameList,Yes)==0){
       printf("Filename [name-list.txt]: ");
-      scanf("%s",&nls);
-      strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/rand.go ");
-      strcat(cmd,pin);
-      strcat(cmd,spc);
-      strcat(cmd,nls);
-      system(cmd);
+      scanf("%s",&NameList);
+      strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/rand.go ");
+      strcat(Command,Pin);
+      strcat(Command,Space);
+      strcat(Command,NameList);
+      system(Command);
     }else{
       printf("Nickname prefix [John]: ");
-      scanf("%s",&nme);
+      scanf("%s",&Name);
       printf("Count [20]: ");
-      scanf("%s",&nob);
-      strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/rand.go ");
-      strcat(cmd,pin);
-      strcat(cmd,spc);
-      strcat(cmd,nme);
-      strcat(cmd,spc);
-      strcat(cmd,nob);
-      system(cmd);
+      scanf("%s",&Count);
+      strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/rand.go ");
+      strcat(Command,Pin);
+      strcat(Command,Space);
+      strcat(Command,Name);
+      strcat(Command,Space);
+      strcat(Command,Count);
+      system(Command);
     }
   }else if (hknm==3){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Nickname prefix [John]: ");
-    scanf("%s",&nme);
+    scanf("%s",&Name);
     printf("Count: ");
-    scanf("%s",&nob);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/profane.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nme);
-    strcat(cmd,spc);
-    strcat(cmd,nob);
-    system(cmd);
+    scanf("%s",&Count);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/profane.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Name);
+    strcat(Command,Space);
+    strcat(Command,Count);
+    system(Command);
   }else if (hknm==4){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Nickname [John]: ");
-    scanf("%s",&nme);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/play.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nme);
-    system(cmd);
+    scanf("%s",&Name);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/play.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Name);
+    system(Command);
   }else if (hknm==5){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Nickname [John]: ");
-    scanf("%s",&nme);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/html.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nme);
-    system(cmd);
+    scanf("%s",&Name);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/html.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Name);
+    system(Command);
   }else if (hknm==6){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Nickname [John]: ");
-    scanf("%s",&nme);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/crash.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,nme);
-    system(cmd);
+    scanf("%s",&Name);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/crash.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Name);
+    system(Command);
   }else if (hknm==7){
     printf("Game pin [123456]: ");
-    scanf("%s",&pin);
+    scanf("%s",&Pin);
     printf("Script: ");
-    scanf("%s",&spt);
-    strcpy(cmd,"go run /data/data/com.termux/files/usr/var/kahoot-hack/xss.go ");
-    strcat(cmd,pin);
-    strcat(cmd,spc);
-    strcat(cmd,spt);
-    system(cmd);
+    scanf("%s",&Script);
+    strcpy(Command,"go run /data/data/com.termux/files/usr/var/kahoot-hack/xss.go ");
+    strcat(Command,Pin);
+    strcat(Command,Space);
+    strcat(Command,Script);
+    system(Command);
   }
 }
