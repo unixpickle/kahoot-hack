@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 int main(){
-int hknm,pass;
+int Option,Loop;
 char Script[20],Count[50],Pin[10],Space[2]=" ",Command[200],NameList[100],Name[20],UseNameList[1],yes[2]="y",Yes[2]="Y";
 printf("\n1. kahoot-flood - using an old school denial of service technique, this program automatically joins a game of kahoot an arbitrary number of times. For instance, you can register the nicknames \"alex1\", \"alex2\", ..., \"alex100\".\n\n");
 printf("2. kahoot-rand - connect to a game an arbitrary number of times (e.g. 100) and answer each question randomly. If you connect with enough names, one of them is bound to win.\n\n");
@@ -12,12 +12,12 @@ printf("6. kahoot-crash - trigger an exception on the host's computer. This no l
 printf("7. kahoot-xss - since I discovered this security hole, I contacted Kahoot and they fixed it. This used to run arbitrary JavaScript code on the host's computer. This exploited a bug with the pre-game player list, which did not sanitize HTML tags. The exploit itself was rather complicated due to the fact that nicknames are limited to 15 characters.\n\n");
 do{
   printf("Which hack do you want to use? [1-7]: ");
-  scanf("%i",&hknm);
-  if (hknm>0&&hknm<8){
-    pass=1;
+  scanf("%i",&Option);
+  if (Option>0&&Option<8){
+    Loop=1;
   }
-}while (pass!=1);
-if (hknm==1){
+}while (Loop!=1);
+if (Option==1){
   printf("Game pin [123456]: ");
   scanf("%s",&Pin);
   printf("Use custom name list? [y/N]: ");
@@ -43,7 +43,7 @@ if (hknm==1){
     strcat(Command,Count);
     system(Command);
   }
-  }else if (hknm==2){
+  }else if (Option==2){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Use custom name list? [y/N]: ");
@@ -69,7 +69,7 @@ if (hknm==1){
       strcat(Command,Count);
       system(Command);
     }
-  }else if (hknm==3){
+  }else if (Option==3){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Nickname prefix [John]: ");
@@ -83,7 +83,7 @@ if (hknm==1){
     strcat(Command,Space);
     strcat(Command,Count);
     system(Command);
-  }else if (hknm==4){
+  }else if (Option==4){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Nickname [John]: ");
@@ -93,7 +93,7 @@ if (hknm==1){
     strcat(Command,Space);
     strcat(Command,Name);
     system(Command);
-  }else if (hknm==5){
+  }else if (Option==5){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Nickname [John]: ");
@@ -103,7 +103,7 @@ if (hknm==1){
     strcat(Command,Space);
     strcat(Command,Name);
     system(Command);
-  }else if (hknm==6){
+  }else if (Option==6){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Nickname [John]: ");
@@ -113,7 +113,7 @@ if (hknm==1){
     strcat(Command,Space);
     strcat(Command,Name);
     system(Command);
-  }else if (hknm==7){
+  }else if (Option==7){
     printf("Game pin [123456]: ");
     scanf("%s",&Pin);
     printf("Script: ");
