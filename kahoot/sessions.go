@@ -9,7 +9,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
+)
+
+var (
+	challengeRegexp = regexp.MustCompile(`^decode\('([a-zA-Z0-9]*)'\); ` +
+		`function decode\(message\) \{var offset = ` +
+		`([0-9\+\*\(\)\s]*); console.log\("Offset derived as:", offset\); ` +
+		`return _\.replace\(message, /\./g, function\(char, position\) ` +
+		`\{return String\.fromCharCode\(\(\(\(char\.charCodeAt\(0\) \* position\)` +
+		` \+ offset\) % 77\) \+ 48\);\}\);\}$`)
 )
 
 func gameSessionToken(gamePin int) (string, error) {
@@ -64,6 +74,19 @@ func decipherToken(xToken, challenge string) (string, error) {
 }
 
 func computeChallenge(ch string) ([]byte, error) {
+	submatch := challengeRegexp.FindStringSubmatch(ch)
+	if submatch != nil {
+		offset, err := eval(submatch[2])
+		if err == nil {
+			var newRunes []rune
+			for i, x := range submatch[1] {
+				n := (((int64(x) * int64(i)) + offset) % 77) + 48
+				newRunes = append(newRunes, rune(n))
+			}
+			return []byte(string(newRunes)), nil
+		}
+	}
+
 	evalURL := url.URL{
 		Scheme:   "http",
 		Host:     "safeval.pw",
