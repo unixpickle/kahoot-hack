@@ -18,7 +18,7 @@ const ConcurrencyCount = 4
 
 func main() {
 	if len(os.Args) != 4 {
-		fmt.Fprintln(os.Stderr, "Usage: profane <game pin> <nickname prefix> <count>")
+		fmt.Fprintln(os.Stderr, "Usage: kahoot-profane\main.go <game pin> <nickname prefix> <count>")
 		os.Exit(1)
 	}
 

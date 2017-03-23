@@ -15,7 +15,7 @@ var wg sync.WaitGroup
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>")
+		fmt.Fprintln(os.Stderr, "Usage: kahoot-xss\main.go <game pin> <script>")
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])

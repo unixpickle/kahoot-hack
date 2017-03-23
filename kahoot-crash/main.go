@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: crash <game pin> <nickname>")
+		fmt.Fprintln(os.Stderr, "Usage: kahoot-crash\main.go <game pin> <nickname>")
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])

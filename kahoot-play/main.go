@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: play <game pin> <nickname>")
+		fmt.Fprintln(os.Stderr, "Usage: kahoot-play\main.go <game pin> <nickname>")
 		os.Exit(1)
 	}
 
