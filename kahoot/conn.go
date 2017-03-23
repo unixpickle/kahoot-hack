@@ -45,7 +45,10 @@ func NewConn(gameId int) (*Conn, error) {
 		return nil, err
 	}
 
-	url, _ := url.Parse("wss://kahoot.it/cometd/" + strconv.Itoa(gameId) + "/" + token)
+	url, err := url.Parse("wss://kahoot.it/cometd/" + strconv.Itoa(gameId) + "/" + token)
+	if err != nil {
+		return nil, err
+	}
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
 	reqHeader.Set("Cookie", "no.mobitroll.session="+strconv.Itoa(gameId))

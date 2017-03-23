@@ -41,14 +41,18 @@ func TestGameSessionToken(t *testing.T) {
 	if err != nil {
 		t.Fatal("website out of reach:", err)
 	}
+	defer conn.Close()
 
-	url, _ := url.Parse("wss://kahoot.it/cometd/" + string(pin) + "/" + token)
+	url, err := url.Parse("wss://kahoot.it/cometd/" + string(pin) + "/" + token)
+	if err != nil {
+		t.Fatal(err)
+	}
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
 	reqHeader.Set("Cookie", "no.mobitroll.session="+string(pin))
 	ws, _, err := websocket.NewClient(conn, url, reqHeader, 100, 100)
+	defer ws.Close()
 	if err != nil {
 		t.Fatal("establish WebSocket:", err)
 	}
-	ws.Close()
 }
