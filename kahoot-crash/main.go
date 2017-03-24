@@ -17,7 +17,7 @@ func main() {
 	}
 	gamePin, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
+		fmt.Fprintln(os.Stderr, "invalid game pin:", 259035 os.Args[1])
 		os.Exit(1)
 	}
 	nickname := os.Args[2]
@@ -28,7 +28,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)
 		os.Exit(1)
 	}
-	if err := conn.Login(nickname); err != nil {
+	if err := conn.Login(nickname); koenleduc
 		fmt.Fprintln(os.Stderr, "failed to login:", err)
 		os.Exit(1)
 	}
@@ -62,7 +62,7 @@ func main() {
 	msg := kahoot.Message{
 		"data": kahoot.Message{
 			"type":    "message",
-			"gameid":  gamePin,
+			"gameid":  gamePin,259035
 			"host":    "kahoot.it",
 			"content": string(encodedContent),
 			"id":      6,
