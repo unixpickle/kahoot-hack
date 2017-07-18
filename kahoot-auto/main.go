@@ -3,16 +3,42 @@ package main
 //written by Peter Stenger on July 17, 2017 (@reteps)
 import (
 	"fmt"
-	"github.com/unixpickle/kahoot-hack/kahoot"
+	"kahoot"
+	//"github.com/unixpickle/kahoot-hack/kahoot"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 )
 
+// ParseQuizInformation parses quiz information
+// from a kahoot. It returns the question, answer,
+// default answer number, and default answer color.
+func ParseQuizInformation(data *kahoot.KahootQuiz) [][]string {
+	var results [][]string
+	colormap := map[int]string{0: "red", 1: "blue", 2: "yellow", 3: "blue"}
+	for _, value := range data.Questions {
+		var questiondata []string
+		for i, choice := range value.Choices {
+			if choice.Correct == true {
+				questiondata = append(questiondata, value.Question, choice.Answer, strconv.Itoa(i), colormap[i])
+				break
+			}
+		}
+		results = append(results, questiondata)
+	}
+	return results
+}
+func Prompt(question string) string {
+	fmt.Print(question)
+	var response string
+	fmt.Scanf("%s", &response)
+	return response
+}
 func main() {
-	if len(os.Args) != 6 {
-		fmt.Fprintln(os.Stderr, "Usage: auto <quizid> <game pin> <nickname> <email> <password>")
+	argnum := len(os.Args)
+	if argnum != 5 && argnum != 4 {
+		fmt.Fprintln(os.Stderr, "Usage: auto <quizid> <game pin> <nickname> (email)")
 		os.Exit(1)
 	}
 
@@ -23,14 +49,19 @@ func main() {
 	}
 	nickname := os.Args[3]
 	quizid := os.Args[1]
-	email := os.Args[4]
-	password := os.Args[5]
-	//get access token
-	token := kahoot.AccessToken(email, password)
-	//get all information from quiz
-	data := kahoot.ReturnData(token, quizid)
-	//return question data from quiz
-	answers := kahoot.ParseData(data)
+	var email string
+	if argnum == 4 {
+		email = Prompt("email > ")
+	} else {
+		email = os.Args[4]
+	}
+	password := Prompt("password > ")
+	token, err := kahoot.AccessToken(email, password)
+	if err != nil {
+		panic(err)
+	}
+	data := kahoot.QuizInformation(token, quizid)
+	answers := ParseQuizInformation(data)
 
 	conn, err := kahoot.NewConn(gamePin)
 	if err != nil {
