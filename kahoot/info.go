@@ -53,7 +53,7 @@ func ReturnData(token, quizid string) map[string]interface{} {
 	return data
 }
 func ParseData(data map[string]interface{}) [][]string {
-	//fmt.Println(data["questions"])
+	//since all data is of interface type, lots of type assertions
 	var results [][]string
 	colormap := map[int]string{0: "red", 1: "blue", 2: "yellow", 3: "blue"}
 	for _, rawvalue := range data["questions"].([]interface{}) {
