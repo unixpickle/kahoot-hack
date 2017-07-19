@@ -115,21 +115,20 @@ func AccessToken(email, password string) (string, error) {
 		return "", err
 	}
 	defer response.Body.Close()
-	//decode response
-	token := &Token{}
-	err = json.NewDecoder(response.Body).Decode(token)
+	receivedtoken := &token{}
+	err = json.NewDecoder(response.Body).Decode(receivedtoken)
 	if err != nil {
 		return "", err
 	}
-	if token.User.Activated == false {
+	if receivedtoken.User.Activated == false {
 		return "", errors.New("401 unauthorized error:email or password is incorrect")
 	}
-	return token.AccessToken, nil
+	return receivedtoken.AccessToken, nil
 }
 
 // QuizInformation returns all quiz information for a
 // specific kahoot id.
-func QuizInformation(token, quizid string) (*KahootQuiz, error) {
+func QuizInformation(token, quizid string) (*QuizInfo, error) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://create.kahoot.it/rest/kahoots/%s", quizid), nil)
 	if err != nil {
@@ -142,7 +141,7 @@ func QuizInformation(token, quizid string) (*KahootQuiz, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	kahootquiz := &KahootQuiz{}
+	kahootquiz := &QuizInfo{}
 	err = json.NewDecoder(response.Body).Decode(kahootquiz)
 	if err != nil {
 		return nil, err

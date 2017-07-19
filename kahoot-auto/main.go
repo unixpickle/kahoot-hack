@@ -1,10 +1,9 @@
 package main
 
-//written by Peter Stenger on July 17, 2017 (@reteps)
+//written by Peter Stenger (@reteps)
 import (
 	"fmt"
-	"kahoot"
-	//"github.com/unixpickle/kahoot-hack/kahoot"
+	"github.com/unixpickle/kahoot-hack/kahoot"
 	"os"
 	"os/signal"
 	"strconv"
@@ -14,7 +13,7 @@ import (
 // ParseQuizInformation parses quiz information
 // from a kahoot. It returns the question, answer,
 // default answer number, and default answer color.
-func ParseQuizInformation(data *kahoot.KahootQuiz) [][]string {
+func ParseQuizInformation(data *kahoot.QuizInfo) [][]string {
 	var results [][]string
 	colormap := map[int]string{0: "red", 1: "blue", 2: "yellow", 3: "blue"}
 	for _, value := range data.Questions {
@@ -29,12 +28,14 @@ func ParseQuizInformation(data *kahoot.KahootQuiz) [][]string {
 	}
 	return results
 }
+
 func Prompt(question string) string {
 	fmt.Print(question)
 	var response string
 	fmt.Scanf("%s", &response)
 	return response
 }
+
 func main() {
 	argnum := len(os.Args)
 	if argnum != 5 && argnum != 4 {
