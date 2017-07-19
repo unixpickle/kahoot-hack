@@ -60,9 +60,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	data := kahoot.QuizInformation(token, quizid)
+	data, err := kahoot.QuizInformation(token, quizid)
+	if err != nil {
+		panic(err)
+	}
 	answers := ParseQuizInformation(data)
-
 	conn, err := kahoot.NewConn(gamePin)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to connect:", err)

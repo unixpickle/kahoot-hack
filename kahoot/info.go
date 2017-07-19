@@ -3,6 +3,7 @@ package kahoot
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -109,28 +110,31 @@ func AccessToken(email, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if token.User.Activated == false {
+		return "", errors.New("401 unauthorized error:email or password is incorrect")
+	}
 	return token.AccessToken, nil
 }
 
 // QuizInformation returns all quiz information for a
 // specific kahoot id.
-func QuizInformation(token, quizid string) *KahootQuiz {
+func QuizInformation(token, quizid string) (*KahootQuiz, error) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://create.kahoot.it/rest/kahoots/%s", quizid), nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	request.Header.Add("content-type", "application/json")
 	request.Header.Add("authorization", token)
 	response, err := client.Do(request)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer response.Body.Close()
 	kahootquiz := &KahootQuiz{}
 	err = json.NewDecoder(response.Body).Decode(kahootquiz)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return kahootquiz
+	return kahootquiz, nil
 }
