@@ -3,6 +3,7 @@ package main
 //written by Peter Stenger (@reteps)
 import (
 	"fmt"
+	"github.com/howeyc/gopass"
 	"github.com/unixpickle/kahoot-hack/kahoot"
 	"os"
 	"os/signal"
@@ -56,8 +57,12 @@ func main() {
 	} else {
 		email = os.Args[4]
 	}
-	password := Prompt("password > ")
-	token, err := kahoot.AccessToken(email, password)
+	fmt.Print("password > ")
+	password, err := gopass.GetPasswdMasked()
+	if err != nil {
+		panic(err)
+	}
+	token, err := kahoot.AccessToken(email, string(password))
 	if err != nil {
 		panic(err)
 	}
