@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	challengeRegexp = regexp.MustCompile(`^decode\('([a-zA-Z0-9]*)'\); ` +
-		`function decode\(message\) \{var offset = ` +
-		`([0-9\+\*\(\)\s]*); console.log\("Offset derived as:", offset\); ` +
+	challengeRegexp = regexp.MustCompile(`^decode\.call\(this, '([a-zA-Z0-9]*)'\); ` +
+		`function decode\(message\) \{var offset = ([0-9\+\*\(\)\s]*); ` +
+		`if \(this\.angular\.[a-zA-Z]*\(offset\)\) \{` +
+		`console.log\("Offset derived as: \{", offset, "\}"\);\}` +
 		`return _\.replace\(message, /\./g, function\(char, position\) ` +
 		`\{return String\.fromCharCode\(\(\(\(char\.charCodeAt\(0\) \* position\)` +
 		` \+ offset\) % 77\) \+ 48\);\}\);\}$`)
