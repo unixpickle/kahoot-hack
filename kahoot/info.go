@@ -59,8 +59,8 @@ type userToken struct {
 	Picture      string            `json:"picture"`
 	Uuid         string            `json:"uuid"`
 	Activated    bool              `json:"activated"`
-	Created      int               `json:"created"`
-	Modified     int               `json:"modified"`
+	Created      int64             `json:"created"`
+	Modified     int64             `json:"modified"`
 	Type         string            `json:"type"`
 	Username     string            `json:"username"`
 	Birthday     []int             `json:"birthday"`
@@ -68,7 +68,7 @@ type userToken struct {
 
 type token struct {
 	AccessToken        string            `json:"access_token"`
-	Expires            int               `json:"expires"`
+	Expires            int64             `json:"expires"`
 	User               userToken         `json:"user"`
 	Roles              []string          `json:"roles"`
 	CountryCode        string            `json:"countryCode"`
@@ -81,13 +81,13 @@ type QuizInfo struct {
 	Uuid                string         `json:"uuid"`
 	QuizType            string         `json:"quizType"`
 	Cover               string         `json:"cover"`
-	Modified            int            `json:"modified"`
+	Modified            int64          `json:"modified"`
 	Creator             string         `json:"creator"`
 	Audience            string         `json:"audience"`
 	Title               string         `json:"title"`
 	Description         string         `json:"description"`
 	Type                string         `json:"type"`
-	Created             int            `json:"created"`
+	Created             int64          `json:"created"`
 	Language            string         `json:"language"`
 	CreatorPrimaryUsage string         `json:"creator_primary_usage"`
 	Questions           []QuizQuestion `json:"questions"`
@@ -96,7 +96,7 @@ type QuizInfo struct {
 	Metadata            QuizMetadata   `json:"metadata"`
 	Resources           string         `json:"resources"`
 	CreatorUsername     string         `json:"creator_username"`
-	Visibility          int            `json:"visibility"`
+	Visibility          int64          `json:"visibility"`
 }
 
 // AccessToken returns an access token from the
