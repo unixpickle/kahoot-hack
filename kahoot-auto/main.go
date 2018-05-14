@@ -3,12 +3,13 @@ package main
 //written by Peter Stenger (@reteps)
 import (
 	"fmt"
-	"github.com/howeyc/gopass"
-	"github.com/unixpickle/kahoot-hack/kahoot"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
+
+	"github.com/howeyc/gopass"
+	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
 // ParseQuizInformation parses quiz information
@@ -44,11 +45,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
-		os.Exit(1)
-	}
+	gamePin := os.Args[2]
 	nickname := os.Args[3]
 	quizid := os.Args[1]
 	var email string

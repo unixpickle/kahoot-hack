@@ -48,9 +48,8 @@ func handleHack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pin := strings.TrimSpace(r.PostFormValue("pin"))
+	gamePin := strings.TrimSpace(r.PostFormValue("pin"))
 	nickname := r.PostFormValue("nickname")
-	gamePin, _ := strconv.Atoi(pin)
 	hackType := r.PostFormValue("hack")
 
 	var res bool
@@ -70,7 +69,7 @@ func handleHack(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func floodHack(gamePin int, nickname string) bool {
+func floodHack(gamePin string, nickname string) bool {
 	log.Println("Flood hack:", gamePin, "with nickname", nickname)
 	for i := 0; i < 20; i++ {
 		conn, err := kahoot.NewConn(gamePin)
@@ -83,7 +82,7 @@ func floodHack(gamePin int, nickname string) bool {
 	return true
 }
 
-func htmlHack(gamePin int, nickname string) bool {
+func htmlHack(gamePin string, nickname string) bool {
 	log.Println("HTML hack:", gamePin, "with nickname", nickname)
 	for _, prefix := range []string{"<h1>", "<u>", "<h2>", "<marquee>", "<button>",
 		"<input>", "<pre>", "<textarea>"} {

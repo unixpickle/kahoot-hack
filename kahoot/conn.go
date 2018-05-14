@@ -23,7 +23,7 @@ type Conn struct {
 	ws *websocket.Conn
 
 	clientId string
-	gameId   int
+	gameId   string
 
 	channelsLock sync.RWMutex
 	incoming     map[string]chan Message
@@ -34,7 +34,7 @@ type Conn struct {
 
 // NewConn connects to the kahoot server and performs a handshake
 // using a given game pin.
-func NewConn(gameId int) (*Conn, error) {
+func NewConn(gameId string) (*Conn, error) {
 	token, err := gameSessionToken(gameId)
 	if err != nil {
 		return nil, errors.New("failed to create session: " + err.Error())
@@ -45,13 +45,13 @@ func NewConn(gameId int) (*Conn, error) {
 		return nil, err
 	}
 
-	url, err := url.Parse("wss://kahoot.it/cometd/" + strconv.Itoa(gameId) + "/" + token)
+	url, err := url.Parse("wss://kahoot.it/cometd/" + gameId + "/" + token)
 	if err != nil {
 		return nil, err
 	}
 	reqHeader := http.Header{}
 	reqHeader.Set("Origin", "https://kahoot.it")
-	reqHeader.Set("Cookie", "no.mobitroll.session="+strconv.Itoa(gameId))
+	reqHeader.Set("Cookie", "no.mobitroll.session="+gameId)
 	ws, _, err := websocket.NewClient(conn, url, reqHeader, 100, 100)
 	if err != nil {
 		return nil, err

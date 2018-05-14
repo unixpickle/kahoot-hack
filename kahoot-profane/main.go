@@ -22,11 +22,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
-		os.Exit(1)
-	}
+	gamePin := os.Args[1]
 
 	var dieLock sync.Mutex
 	connChan := make(chan *kahoot.Conn)

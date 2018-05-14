@@ -31,11 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
-		os.Exit(1)
-	}
+	gamePin := os.Args[1]
 
 	nicknames, err := readNicknames()
 	if err != nil {
@@ -59,7 +55,7 @@ func main() {
 	wg.Wait()
 }
 
-func launchConnection(gamePin int, nickname string) {
+func launchConnection(gamePin string, nickname string) {
 	defer wg.Done()
 
 	conn, err := kahoot.NewConn(gamePin)

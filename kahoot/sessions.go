@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
-	"strconv"
 )
 
 var (
@@ -23,12 +22,12 @@ var (
 		` \+ offset\) % 77\) \+ 48\);\}\);\}$`)
 )
 
-func gameSessionToken(gamePin int) (string, error) {
+func gameSessionToken(gamePin string) (string, error) {
 	return attemptGameSessionToken(gamePin)
 }
 
-func attemptGameSessionToken(gamePin int) (string, error) {
-	resp, err := http.Get("https://kahoot.it/reserve/session/" + strconv.Itoa(gamePin))
+func attemptGameSessionToken(gamePin string) (string, error) {
+	resp, err := http.Get("https://kahoot.it/reserve/session/" + gamePin)
 	if resp != nil {
 		defer resp.Body.Close()
 	}
@@ -46,7 +45,7 @@ func attemptGameSessionToken(gamePin int) (string, error) {
 	}
 	if err := json.Unmarshal(body, &bodyObj); err != nil {
 		if string(body) == "Not found" {
-			return "", fmt.Errorf("game pin not found: %d", gamePin)
+			return "", fmt.Errorf("game pin not found: %s", gamePin)
 		}
 		return "", fmt.Errorf("parse session challenge: %s", err)
 	}

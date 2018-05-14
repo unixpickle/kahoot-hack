@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/websocket"
@@ -26,11 +26,7 @@ func TestGameSessionToken(t *testing.T) {
 		t.Fatal("read session pin:", err)
 	}
 
-	pinNum, err := strconv.Atoi(string(pin))
-	if err != nil {
-		t.Fatal("invalid pin:", string(pin))
-	}
-	token, err := gameSessionToken(pinNum)
+	token, err := gameSessionToken(strings.TrimSpace(string(pin)))
 	if err != nil {
 		t.Fatal("get token:", err)
 	}
