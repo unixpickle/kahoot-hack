@@ -108,7 +108,7 @@ func (q *Quiz) Send(index int) error {
 	encodedContent, _ := json.Marshal(content)
 	message := Message{
 		"data": Message{
-			"id":      6,
+			"id":      45,
 			"type":    "message",
 			"gameid":  q.conn.gameId,
 			"host":    "kahoot.it",
