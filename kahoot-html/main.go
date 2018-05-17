@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
@@ -15,7 +16,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin := os.Args[1]
+	gamePin, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Println("Invalid game pin")
+		os.Exit(1)
+	}
 	nickname := os.Args[2]
 
 	for _, prefix := range []string{"h1", "u", "h2", "marquee", "button",

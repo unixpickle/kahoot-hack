@@ -20,7 +20,7 @@ First, you must have [the Go programming language](https://golang.org/doc/instal
 
 Once you have Go installed and a `GOPATH` configured, you can use the following command to install the dependencies:
 
-    go get github.com/gorilla/websocket
+    go get github.com/gorilla/websocket && go get github.com/howeyc/gopass
     
 # Android
 

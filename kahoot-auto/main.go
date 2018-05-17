@@ -45,7 +45,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin := os.Args[2]
+	gamePin, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		fmt.Println("Invalid game pin")
+		os.Exit(1)
+	}
 	nickname := os.Args[3]
 	quizid := os.Args[1]
 	var email string
