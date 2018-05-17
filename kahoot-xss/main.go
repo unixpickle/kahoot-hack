@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -17,7 +18,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Usage: xss <game pin> <script>")
 		os.Exit(1)
 	}
-	gamePin := os.Args[1]
+	gamePin, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Println("Invalid game pin")
+		os.Exit(1)
+	}
 
 	elementText := `<img src="" onerror="` + escapeScript(os.Args[2]) + `">`
 

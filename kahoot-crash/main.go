@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/unixpickle/kahoot-hack/kahoot"
@@ -14,7 +15,11 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Usage: crash <game pin> <nickname>")
 		os.Exit(1)
 	}
-	gamePin := os.Args[1]
+	gamePin, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Println("Invalid game pin")
+		os.Exit(1)
+	}
 	nickname := os.Args[2]
 
 	conn, err := kahoot.NewConn(gamePin)
