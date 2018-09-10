@@ -6,10 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
-	"strings"
 	"sync"
 	"syscall"
-
+        "strings"
 	"github.com/unixpickle/kahoot-hack/kahoot"
 )
 
@@ -22,7 +21,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	gamePin := os.Args[1]
+	gamePin, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "invalid game pin:", os.Args[1])
+		os.Exit(1)
+	}
 
 	var dieLock sync.Mutex
 	connChan := make(chan *kahoot.Conn)
@@ -61,21 +64,7 @@ func nicknames() []string {
 			os.Exit(1)
 		}
 		base := os.Args[2]
-		res := make([]string, count)
-		w := ""
-		k := 0
-		r := 0
-		hi :=[20]string{" "," "," ","᠎"," "," "," "," "," "," "," "," "," "," "," "," ","　"," "," "," "}
-		for x := 0; x < count; x++ {
-			k =x
-			w=""
-			for y := int(math.Logb(float64(x))/4); y > 0; y-- {
-					r = int(k)/int(math.Pow(20,float64(y)))
-					k = int(k)-int(r)*int(math.Pow(20,float64(y)))
-					w = hi[int(r)] + w
-				}
-			res[x] = base + w
-		}
+		res := unicorn(15-len(base), count, base)
 		return res
 	}
 
@@ -96,4 +85,35 @@ func nicknames() []string {
 	}
 
 	return res
+}
+func unicorn(length, count int, base string) []string {
+   char := []string{" ", " ", "᠎", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "​", " ", " "}
+   //charlist
+   list := make([]string, 0)
+   z := []string{"", "", ""}
+   for i := 0; i < len(char); i++ {
+      z[2] = char[i]
+      z[0] = base
+      list = append(list, strings.Join(z, ""))
+   }
+   for a := 0; a < length; a++ {
+      for i := 0; i < len(list); i++ {
+         for j := 0; j < len(char); j++ {
+            z[2] = char[j]
+            z[1] = list[i][len(z[0]):]
+            z[0] = base
+            if len(list) > count {
+               break
+            }
+            list = append(list, strings.Join(z, ""))
+         }
+         if len(list) > count {
+           break
+         }
+      }
+      if len(list) > count {
+         break
+      }
+   }
+   return list
 }
