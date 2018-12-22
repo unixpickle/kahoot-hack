@@ -19,7 +19,7 @@ import (
 
 var wg sync.WaitGroup
 
-const ConnectionDelay = time.Millisecond * 100
+const ConnectionDelay = time.Millisecond * 1
 
 var StatisticsChan = make(chan int, 0)
 var AnswerCount uint32
