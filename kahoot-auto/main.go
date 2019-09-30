@@ -41,7 +41,8 @@ func Prompt(question string) string {
 func main() {
 	argnum := len(os.Args)
 	if argnum != 5 && argnum != 4 {
-		fmt.Fprintln(os.Stderr, "Usage: auto <quizid> <game pin> <nickname> (email)")
+		fmt.Fprintln(os.Stderr, "Usage: auto <GS Gt2
+> <52177> <luke> (email)")
 		os.Exit(1)
 	}
 
