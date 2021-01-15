@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Fprintln(os.Stderr, "Usage: crash <game pin> <nickname>")
+		fmt.Fprintln(os.Stderr, "Usage: crash <3046426> <lol>")
 		os.Exit(1)
 	}
 	gamePin := os.Args[1]
@@ -56,8 +56,8 @@ func main() {
 	encodedContent, _ := json.Marshal(content)
 	msg := kahoot.Message{
 		"data": kahoot.Message{
-			"type":    "message",
-			"gameid":  gamePin,
+			"type":    "lol get crashed",
+			"gameid":  3046426,
 			"host":    "kahoot.it",
 			"content": string(encodedContent),
 			"id":      6,
